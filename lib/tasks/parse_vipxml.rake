@@ -232,12 +232,13 @@ class VipHandler
 	end
 
 	def on_end_document()
+		#resolve IDs.  Might add internal_file_id to unresolved_ids record as a check
 		unresolved_ids = @source.unresolved_ids
-		puts unresolved_ids.size if Debug > 1
+#		puts unresolved_ids.size if Debug > 1
 
 		unresolved_ids.each do |u|
-			obj = u.class.constantize.find_by_id(u.object_id)	
-			if (addXmlAttribute(obj,parameter,obj[parameter])) then	
+			obj = u.object_class.constantize.find_by_id(u.object_id)	
+			if (addXmlAttribute(obj,u.parameter,obj[u.parameter])) then	
 				obj.save
 				u.destroy
 			end
@@ -245,9 +246,20 @@ class VipHandler
 
 		@source.import_completed_at = Time.now
 		@source.save
-			
+		puts @unresolved_ids.size
 
-		#resolve IDs.  Might add internal_file_id to unresolved_ids record as a check
+		# add state_id to streets
+		# MySQL Specific!
+		@source.connection.execute("UPDATE street_addresses sa, 
+                                                   street_segments ss, 
+                                                   precincts p, 
+                                                   localities l 
+                                            SET    sa.state_id = l.state_id
+		                            WHERE  sa.id IN (ss.start_street_address_id, ss.end_street_address_id)
+		                              AND  ss.precinct_id = p.id
+		                              AND  p.locality_id = l.id
+		                              AND  sa.source_id = #{@source.id}")
+
 	end
 
 	def on_end_element_ns(element, prefix, uri)

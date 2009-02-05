@@ -133,6 +133,7 @@ ActiveRecord::Schema.define() do
 
   create_table "street_addresses", :force => true do |t|
     t.integer "source_id",                                        :null => false
+    t.integer "state_id",                                         :null => false
     t.integer "file_internal_id",                                 :null => false, :limit => 8
     t.string  "house_number",      :limit => 25
     t.string  "street_direction",  :limit => 25
