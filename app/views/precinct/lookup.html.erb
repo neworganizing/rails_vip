@@ -1,0 +1,25 @@
+<% form_tag :action => "lookup" do %>
+Street Number: <%= text_field "form_data", "street_num" %><br/>
+Street Name:   <%= text_field "form_data", "street" %><br/>
+City:          <%= text_field "form_data", "city" %><br />
+State:         <%= text_field "form_data", "state" %><br />
+<!--Address: <%= text_field "form_data", "address" %><br />-->
+<%= submit_tag %>
+<% end%>
+<% if @loc then %>
+<%=  GMap.header %>
+<%=  @map.to_html %>
+<%= @map.div(:width => 493, :height => 300) %>
+<br/><table border="1px">
+<tr><td><b>Your Address: </b></td><td><%=h @loc.address %></td></tr>
+<tr><td><b>Polling Location: </b></td>
+<td>
+<%= @polling_loc_std.nil?          ? '' : @polling_loc_std.address + '<br/>'%>
+<%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
+<%= @polling_location.address.nil?       ? '' : @polling_location.address + '<br/>'%>
+<%= @polling_location.directions.nil?    ? '' : @polling_location.directions+ '<br/>' %>
+<%=h @polling_location.polling_hours.nil? ? '' : @polling_location.polling_hours+ '<br/>' %>
+</td></tr>
+</table>
+<% end %>
+

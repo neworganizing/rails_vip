@@ -1,0 +1,5 @@
+class Locality < ActiveRecord::Base
+	belongs_to :source
+	belongs_to :election_administration
+
+end

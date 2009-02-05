@@ -1,0 +1,3 @@
+class State < XmlEntity
+	belongs_to :source
+end

@@ -1,0 +1,2 @@
+module PrecinctHelper
+end
