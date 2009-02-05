@@ -1,4 +1,3 @@
-
 class VipHandler 
 	# Parses Voting Information Project format version 1.4
 	
