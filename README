@@ -10,6 +10,7 @@ Tags handled:
  - street_address 
 
 Future work:
+ - Upgrade to v1.5 (multiple polling locations per precinct and split)
  - Separate app in to a presentation front-end and a plugin-based back-end handling VIP info
  - Handle more tags
    - custom_note

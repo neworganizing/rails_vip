@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :precinct_splits
+
   map.resources :sources
 
   # The priority is based upon order of creation: first created -> highest priority.
