@@ -36,9 +36,6 @@ class PrecinctController < ApplicationController
 
 
 			data = params[:form_data]
-			@params ||= []
-			#@params['form_data'] = data
-			#
 			input_address = data[:street_num] + " " +
 			                data[:street] + ", " +
 			                data[:city] + ", " +
@@ -57,9 +54,7 @@ class PrecinctController < ApplicationController
 			@map.center_zoom_init([@loc.latitude, @loc.longitude],15)
 			
 			#still just a string, but at least it looks good 
-		
 			@ss = StreetSegment.new.find_by_address(data)
-			
 			if (!@ss.nil?) then
 				@precinct = @ss.precinct
 				@polling_location = @precinct.polling_location
@@ -83,6 +78,38 @@ class PrecinctController < ApplicationController
 						end
 					end
 				end
+			end
+			@map = GMap.new('map_div')
+			if (!@polling_loc_std.nil?) then
+				#find bounding box to include polling 
+				#and home addresses
+				sw = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].max,[@polling_loc_std.longitude, @loc.longitude].min])
+				ne = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].min,[@polling_loc_std.longitude, @loc.longitude].max])
+				@map.center_zoom_on_bounds_init(GLatLngBounds.new(sw,ne))
+				
+				pollurl = 'http://www.martintod.org.uk/blog/LDballotBox.png'
+				homeurl = 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png'
+				@map.icon_global_init(GIcon.new(
+					:copy_base => GIcon::DEFAULT,
+					:image => pollurl,
+					:icon_size => GSize.new(20,34)),
+#					:icon_anchor => GPoint.new(7,7),
+#					:info_window_anchor => GPoint.new(9,2)),
+					"icon_poll")
+				@map.icon_global_init(GIcon.new(
+					:copy_base => GIcon::DEFAULT,
+					:image => homeurl,
+					:icon_size => GSize.new(20,34)),
+#					:icon_anchor => GPoint.new(7,7),
+#					:info_window_anchor => GPoint.new(9,2)),
+					"icon_home")
+				icon_poll = Variable.new("icon_poll")
+				icon_home = Variable.new("icon_home")
+				@map.overlay_init(GMarker.new(@polling_loc_std.coordinates,
+				                    :title => @polling_location.name,
+				                    :info_window => @polling_location.name, 
+				                    :icon => icon_poll
+						    ))
 
 
 				#plot the street segment
@@ -123,7 +150,6 @@ class PrecinctController < ApplicationController
 							    ))
 	
 				end #if (!@polling_loc.nil?)
-
 	
 			else
 				true

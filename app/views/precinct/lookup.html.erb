@@ -39,7 +39,13 @@ ID: <%= @precinct.id %><br/>
 <% if !@polling_location.nil? then %>
 <tr>
 <td><b>Polling Location: </b></td>
-<td>
+=======
+<%=  GMap.header %>
+<%=  @map.to_html %>
+<%= @map.div(:width => 493, :height => 300) %>
+<br/><table border="1px">
+<tr><td><b>Your Address: </b></td><td><%=h @loc.address %></td></tr>
+<tr><td><b>Polling Location: </b></td>
 <%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
 <%= @polling_location.address.nil?       ? '' : @polling_location.address + '<br/>'%>
 <%= @polling_location.directions.nil?    ? '' : @polling_location.directions+ '<br/>' %>

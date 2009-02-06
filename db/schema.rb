@@ -41,7 +41,6 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.date    "start_date"
     t.date    "end_date"
   end
-
   add_index "custom_notes", ["source_id", "file_internal_id"], :name => "index_custom_notes_on_source_id_and_file_internal_id"
 
   create_table "election_administrations", :force => true do |t|
@@ -122,7 +121,6 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.string  "mail_only",           :limit => 3
     t.integer "polling_location_id", :limit => 8
   end
-
   add_index "precincts", ["source_id", "file_internal_id"], :name => "index_precincts_on_source_id_and_file_internal_id"
 
   create_table "sources", :force => true do |t|
@@ -185,6 +183,7 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.string  "name",                            :default => "", :null => false
     t.string  "type"
     t.integer "statewide_state_id", :limit => 8
+    #next 3 allow acts_as_nested_set
     t.integer "parent_id"
     t.integer "lft"
     t.integer "rgt"
