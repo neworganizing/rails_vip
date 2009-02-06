@@ -23,39 +23,39 @@
 
 <div id="maptable" style="float:left">
 <table class="maptable">
-<tr><td class="maptable"><b>Your Address: </b></td><td class="maptable"><%=h @loc.address %></td></tr>
+	<tr>
+		<td class="maptable"><b>Your Address: </b></td>
+		<td class="maptable"><%=h @loc.address %></td>
+	</tr>
 <% if !@precinct.nil? then %>
-<tr class="maptable"><td><b>Precinct: </b></td>
-<td> Name: <%= @precinct.name %><br/>
-Ward: <%= @precinct.ward %><br/>
-File ID: <%= @precinct.file_internal_id%><br/>
-ID: <%= @precinct.id %><br/>
-</td>
-<tr><td><b>Locality (County): </b></td>
-<td> <%= @precinct.locality.name %><br/>
-</td>
-</tr>
+	<tr class="maptable"><td><b>Precinct: </b></td>
+		<td> Name: <%= @precinct.name %><br/>
+		Ward: <%= @precinct.ward %><br/>
+		File ID: <%= @precinct.file_internal_id%><br/>
+		ID: <%= @precinct.id %><br/>
+		</td>
+	</tr>
+	<tr>
+		<td><b>Locality (County): </b></td>
+		<td> <%= @precinct.locality.name %><br/>
+		</td>
+	</tr>
 <% end %>
 <% if !@polling_location.nil? then %>
-<tr>
-<td><b>Polling Location: </b></td>
-=======
-<%=  GMap.header %>
-<%=  @map.to_html %>
-<%= @map.div(:width => 493, :height => 300) %>
-<br/><table border="1px">
-<tr><td><b>Your Address: </b></td><td><%=h @loc.address %></td></tr>
-<tr><td><b>Polling Location: </b></td>
-<%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
+	<tr>
+		<td><b>Polling Location: </b></td>
+<td><%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
 <%= @polling_location.address.nil?       ? '' : @polling_location.address + '<br/>'%>
 <%= @polling_location.directions.nil?    ? '' : @polling_location.directions+ '<br/>' %>
 <%=h @polling_location.polling_hours.nil? ? '' : @polling_location.polling_hours+ '<br/>' %>
-</td></tr>
-<td><b>Poll Marker at:</b></td>
-<td>
+		</td>
+	</tr>
+	<tr>	
+		<td><b>Poll Marker at:</b></td>
+		<td>
 <%= @polling_loc_std.nil?          ? '' : @polling_loc_std.address + '<br/>'%>
-</td>
-</tr>
+		</td>
+	</tr>
 <% end %>
 </table>
 </div>

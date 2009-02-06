@@ -1,5 +1,7 @@
 class PrecinctController < ApplicationController
 	layout 'layouts/main'
+	POLL_URL = 'http://www.martintod.org.uk/blog/LDballotBox.png'
+	HOME_URL = 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png'
 	require 'rubygems'
 	require 'google_geocode'
 	def show
@@ -13,24 +15,23 @@ class PrecinctController < ApplicationController
 	end
 	def lookup
 		if request.post?
-			@map = GMap.new('map_div')
 
-			pollurl = 'http://www.martintod.org.uk/blog/LDballotBox.png'
-			homeurl = 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png'
+			@map = GMap.new('map_div')
 			@map.icon_global_init(GIcon.new(
 				:copy_base => GIcon::DEFAULT,
-				:image => pollurl,
+				:image => POLL_URL,
 				:icon_size => GSize.new(20,34)),
 #				:icon_anchor => GPoint.new(7,7),
 #				:info_window_anchor => GPoint.new(9,2)),
 				"icon_poll")
 			@map.icon_global_init(GIcon.new(
 				:copy_base => GIcon::DEFAULT,
-				:image => homeurl,
+				:image => HOME_URL,
 				:icon_size => GSize.new(20,34)),
 #				:icon_anchor => GPoint.new(7,7),
 #				:info_window_anchor => GPoint.new(9,2)),
 				"icon_home")
+
 			icon_poll = Variable.new("icon_poll")
 			icon_home = Variable.new("icon_home")
 
@@ -76,15 +77,18 @@ class PrecinctController < ApplicationController
 						rescue
 							@polling_loc_std = nil
 						end
-					end
-				end
-			end
-			@map = GMap.new('map_div')
+					end #polling_loc_std.nil
+				end #each address
+			end #!ss.nil?
+
 			if (!@polling_loc_std.nil?) then
 				#find bounding box to include polling 
 				#and home addresses
-				sw = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].max,[@polling_loc_std.longitude, @loc.longitude].min])
-				ne = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].min,[@polling_loc_std.longitude, @loc.longitude].max])
+				sw = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].max,
+				                  [@polling_loc_std.longitude, @loc.longitude].min])
+				ne = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].min,
+				                  [@polling_loc_std.longitude, @loc.longitude].max])
+
 				@map.center_zoom_on_bounds_init(GLatLngBounds.new(sw,ne))
 				
 				pollurl = 'http://www.martintod.org.uk/blog/LDballotBox.png'
