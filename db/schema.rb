@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090206152433) do
+ActiveRecord::Schema.define(:version => 20090209221132) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -24,6 +24,69 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
   end
 
   add_index "ballot_drop_locations", ["source_id", "file_internal_id"], :name => "index_ballot_drop_locations_on_source_id_and_file_internal_id"
+
+  create_table "ballots", :force => true do |t|
+    t.integer "source_id",        :null => false
+    t.integer "file_internal_id", :null => false
+    t.string  "write_in"
+  end
+
+  add_index "ballots", ["source_id", "file_internal_id"], :name => "index_ballots_on_source_id_and_file_internal_id"
+
+  create_table "campaign_issues", :force => true do |t|
+    t.integer "source_id",                       :null => false
+    t.integer "file_internal_id",                :null => false
+    t.string  "name",             :limit => 250
+    t.text    "description"
+    t.string  "category",         :limit => 100
+    t.integer "election_id"
+  end
+
+  add_index "campaign_issues", ["source_id", "file_internal_id"], :name => "index_campaign_issues_on_source_id_and_file_internal_id"
+
+  create_table "candidate_statements", :force => true do |t|
+    t.integer "source_id",         :null => false
+    t.integer "file_internal_id",  :null => false
+    t.integer "candidate_id"
+    t.integer "campaign_issue_id"
+    t.text    "statement"
+    t.date    "date"
+  end
+
+  add_index "candidate_statements", ["source_id", "file_internal_id"], :name => "index_candidate_statements_on_source_id_and_file_internal_id"
+
+  create_table "candidates", :force => true do |t|
+    t.integer "source_id",                            :null => false
+    t.integer "file_internal_id",                     :null => false
+    t.string  "name",                  :limit => 250, :null => false
+    t.string  "party",                 :limit => 150
+    t.string  "candidate_url",         :limit => 250
+    t.text    "biography"
+    t.string  "phone",                 :limit => 50
+    t.string  "photo_url",             :limit => 250
+    t.string  "filed_mailing_address", :limit => 250
+    t.string  "email_address",         :limit => 250
+  end
+
+  add_index "candidates", ["source_id", "file_internal_id"], :name => "index_candidates_on_source_id_and_file_internal_id"
+
+  create_table "contests", :force => true do |t|
+    t.integer "source_id",                                                :null => false
+    t.integer "file_internal_id",                                         :null => false
+    t.integer "election_id",                                              :null => false
+    t.integer "tabulation_area_id",                                       :null => false
+    t.string  "type",                       :limit => 30
+    t.string  "partisan",                   :limit => 10
+    t.string  "primary_party",              :limit => 100
+    t.text    "electorate_specdifications"
+    t.string  "special",                    :limit => 10
+    t.string  "office",                     :limit => 100
+    t.integer "number_elected",                            :default => 1
+    t.integer "number_voting_for",                         :default => 1
+    t.integer "ballot_id"
+  end
+
+  add_index "contests", ["source_id", "file_internal_id"], :name => "index_contests_on_source_id_and_file_internal_id"
 
   create_table "contribs", :force => true do |t|
     t.string   "name",         :limit => 128
@@ -41,14 +104,15 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.date    "start_date"
     t.date    "end_date"
   end
+
   add_index "custom_notes", ["source_id", "file_internal_id"], :name => "index_custom_notes_on_source_id_and_file_internal_id"
 
   create_table "election_administrations", :force => true do |t|
-    t.integer "source_id",                                                                  :null => false
-    t.integer "file_internal_id",     :limit => 8,                                          :null => false
-    t.string  "name",                                :default => "Election Administration"
-    t.integer "election_official_id", :limit => 8
-    t.integer "ovc_id",               :limit => 8
+    t.integer "source_id",                                                                 :null => false
+    t.integer "file_internal_id",    :limit => 8,                                          :null => false
+    t.string  "name",                               :default => "Election Administration"
+    t.integer "eo_id",               :limit => 8
+    t.integer "ovc_id",              :limit => 8
     t.text    "physical_address"
     t.text    "mailing_address"
     t.string  "elections_url"
@@ -58,7 +122,7 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.string  "where_do_i_vote_url"
     t.string  "rules_url"
     t.string  "hours"
-    t.text    "voter_services",       :limit => 255
+    t.text    "voter_services",      :limit => 255
   end
 
   add_index "election_administrations", ["source_id", "file_internal_id"], :name => "index_election_administrations_on_source_id_and_file_internal_id"
@@ -74,6 +138,21 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
   end
 
   add_index "election_officials", ["source_id", "file_internal_id"], :name => "index_election_officials_on_source_id_and_file_internal_id"
+
+  create_table "elections", :force => true do |t|
+    t.integer "source_id",                                              :null => false
+    t.integer "file_internal_id",                                       :null => false
+    t.date    "date"
+    t.string  "election_type",        :limit => 25
+    t.integer "state_id"
+    t.string  "statewide",            :limit => 4,   :default => "yes"
+    t.text    "registration_info"
+    t.text    "absentee_ballot_info"
+    t.string  "results_url",          :limit => 100
+    t.string  "polling_hours"
+  end
+
+  add_index "elections", ["source_id", "file_internal_id"], :name => "index_elections_on_source_id_and_file_internal_id"
 
   create_table "localities", :force => true do |t|
     t.integer "source_id",                                                :null => false
@@ -121,6 +200,7 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.string  "mail_only",           :limit => 3
     t.integer "polling_location_id", :limit => 8
   end
+
   add_index "precincts", ["source_id", "file_internal_id"], :name => "index_precincts_on_source_id_and_file_internal_id"
 
   create_table "sources", :force => true do |t|
@@ -183,7 +263,6 @@ ActiveRecord::Schema.define(:version => 20090206152433) do
     t.string  "name",                            :default => "", :null => false
     t.string  "type"
     t.integer "statewide_state_id", :limit => 8
-    #next 3 allow acts_as_nested_set
     t.integer "parent_id"
     t.integer "lft"
     t.integer "rgt"

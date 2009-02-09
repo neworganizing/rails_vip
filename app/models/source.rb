@@ -15,6 +15,8 @@ class Source < ActiveRecord::Base
 	has_many :tabulation_areas
 	has_many :unresolved_ids
 
+	has_one :feed_contact, :class_name => 'ElectionOfficial'
+
 	def import(url, file = nil)
 
 		@url = url
@@ -46,7 +48,7 @@ class Source < ActiveRecord::Base
 			FileUtils.mkdir_p temppath
 			fullfile = temppath + '/' + filename
 
-			Net::HTTP.start (uri.host) { |http|
+			Net::HTTP.start(uri.host) { |http|
 				resp = http.get(uri.path)
 				open(fullfile, "wb") { |file|
 					file.write(resp.body)
@@ -64,6 +66,8 @@ class Source < ActiveRecord::Base
 			else
 				xmlfile = fullfile
 			end
+		else
+			xmlfile = file	
 		end
 
 		con = LibXML::XML::Parser::Context.file(xmlfile)

@@ -2,17 +2,17 @@
 <% form_tag :action => "lookup" do %>
 <table border="0">
 <tr>
-	<td><%= label "form_data", "street_num", "Street Number"%></td>
-	<td><%= text_field "form_data", "street_num", :size => "10"%></td>
+	<td><%= label_tag "street_num", "Street Number"%></td>
+	<td><%= text_field_tag "street_num", @params[:street_num], :size => "10"%></td>
 </tr><tr>
-	<td><%= label "form_data", "street", "Street Name"%></td>
-	<td><%= text_field "form_data", "street" %></td>
+	<td><%= label_tag "street", "Street Name"%></td>
+	<td><%= text_field_tag "street", @params[:street] %></td>
 </tr><tr>
-	<td><%= label "form_data", "city", "City"%></td>
-	<td><%= text_field "form_data", "city" %></td>
+	<td><%= label_tag "city", "City"%></td>
+	<td><%= text_field_tag "city", @params[:city]  %></td>
 </tr><tr>
-	<td><%= label "form_data", "state", "State"%></td>
-	<td><%= text_field "form_data", "state", :size => "2" %></td>
+	<td><%= label_tag "state", "State"%></td>
+	<td><%= text_field_tag "state", @params[:state], :size => "2" %></td>
 </tr>
 </table>
 <%= submit_tag "Find Polling Place" %>

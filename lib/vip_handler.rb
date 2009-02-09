@@ -5,19 +5,20 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 1   #debug level
+	Debug = 0   #debug level
 	
 	# defines which top-level elements to parse
 	Topelements = ["source","state",
 	               "locality","precinct",
 	               "precinct_split", "election_administration",       #
 	               "election_official", "ballot_drop_location",       #
-	               "contest","ballot","candidate","campaign_issue",   #
-	               "campaign_statement","referendum","custom_ballot", #
-	               "ballot_response", "custom_note"                   #
+	               "contest","candidate","campaign_issue",   #
+	               "campaign_statement", #
+	               "custom_note",                  #
 	               "polling_location","street_segment",
-	               "street_address"
-	               #"tabulation_area"]
+	               "street_address"]
+	               #"ballot","tabulation_area","referendum","custom_ballot",
+	               #"ballot_response"]
 
 	# don't try to map the following ID elements to objects
 	IdExceptions = ["vip_id", "file_internal_id"]
@@ -48,11 +49,20 @@ class VipHandler
 				attribute_type = innerattrib[0,innerattrib.size-3]
 
 				#drop start_ or end_ from attribute type of street address id's
-				if (attribute_type.length >= 14 && attribute_type[-14,14] == 'street_address') then
-					attribute_type = 'street_address'
-				end
-				referenced_obj = attribute_type.camelcase.constantize.find(:first, 
-				                    :conditions => "source_id = #{@source_id} AND file_internal_id = #{val}")
+#				if (attribute_type.length >= 14 && attribute_type[-14,14] == 'street_address') then
+#					attribute_type = 'street_address'
+#				end
+#				referenced_obj = attribute_type.camelcase.constantize.find(:first, 
+#				                    :conditions => "source_id = #{@source_id} AND file_internal_id = #{val}")
+				
+				puts obj.class
+				puts attribute_type
+				attribute_class = obj.class.reflect_on_association(attribute_type.to_sym).klass
+				referenced_obj = @source_id.nil? ? nil : attribute_class.find(:first, 
+				                    :conditions => ["source_id = ? AND file_internal_id = ?", 
+				                                    @source_id, val ])
+				
+
 
 				if referenced_obj.nil? then
 					# we haven't found the referenced ID in the stack yet.
@@ -216,7 +226,7 @@ class VipHandler
 		# add state_id to streets.  these eases later lookup
 		addresses = @source.street_addresses
 		addresses.each do |addr|
-			addr.state = addr.street_segment.precinct.locality.state
+			addr.state = addr.street_segments.first.precinct.locality.state
 			addr.save
 		end
 
@@ -245,7 +255,7 @@ class VipHandler
 			addXmlAttribute(obj,element,chars)
 			@store_chars = false;
 		else
-			puts "\tEnd "+element+" \n " + @stack.size.to_s if Debug>3
+			puts "End "+element+" \n " + @stack.size.to_s if Debug>2
 #			if ["source", "precinct"].include?(element.downcase) then
 			if @stack.size == 1 then
 				obj = @stack.pop

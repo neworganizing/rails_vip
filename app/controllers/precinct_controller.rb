@@ -14,6 +14,12 @@ class PrecinctController < ApplicationController
 		end
 	end
 	def lookup
+		#set defaults
+		@params ||= params
+		@params[:street_num] ||= ''
+		@params[:street]     ||= ''
+		@params[:city]       ||= ''
+		@params[:state]      ||= ''
 		if request.post?
 
 			@map = GMap.new('map_div')
@@ -36,23 +42,31 @@ class PrecinctController < ApplicationController
 			icon_home = Variable.new("icon_home")
 
 
-			data = params[:form_data]
+#			data = params[:form_data]
+			data = Hash.new
+			data[:street_num] = params[:street_num]
+			data[:street] = params[:street]
+			data[:city] = params[:city]
+			data[:state] = params[:state]
 			input_address = data[:street_num] + " " +
 			                data[:street] + ", " +
 			                data[:city] + ", " +
 			                data[:state]
 			#standardize address
 			gg = GoogleGeocode.new "ABQIAAAAu7Re6QJVDQ3U5Sp2u2w3UhSwMyR9mQOTO__cwzDlnGLWnDHQaxQofqAx35lKdPCM1ODtbttHZKOR3Q"	
-			@loc = gg.locate input_address
-			homeaddress = @loc.address
+			begin
+				@loc = gg.locate input_address
+				homeaddress = @loc.address
 
-			@map.overlay_init(GMarker.new(@loc.coordinates,
-			                    :title => @loc.address,
-			                    :info_window => homeaddress,
-					    :icon_size => GSize.new(25,25),
-			                    :icon => icon_home))
-			@map.control_init(:large_map => true, :map_type => true)
-			@map.center_zoom_init([@loc.latitude, @loc.longitude],15)
+				@map.overlay_init(GMarker.new(@loc.coordinates,
+				                    :title => @loc.address,
+				                    :info_window => homeaddress,
+						    :icon_size => GSize.new(25,25),
+				                    :icon => icon_home))
+				@map.control_init(:large_map => true, :map_type => true)
+				@map.center_zoom_init([@loc.latitude, @loc.longitude],15)
+			rescue
+			end
 			
 			#still just a string, but at least it looks good 
 			@ss = StreetSegment.new.find_by_address(data)
@@ -120,17 +134,23 @@ class PrecinctController < ApplicationController
 				@precinct.street_segments.each do |seg|
 					s_start = seg.start_street_address
 					s_end   = seg.end_street_address
-					seg_addr_start = s_start.house_number + ' ' + s_start.street_direction + ' ' +
-					                 s_start.street_name + ' ' + s_start.street_suffix + ' ' +
+					seg_addr_start = (s_start.house_number.nil? ? '' : s_start.house_number) + ' ' + 
+					                 (s_start.street_direction.nil? ? '' : s_start.street_direction) + ' ' +
+					                 (s_start.street_name.nil? ? '' : s_start.street_name) + ' ' + 
+					                 (s_start.street_suffix.nil? ? '' : s_start.street_suffix) + ' ' +
 					                 (s_start.address_direction.nil? ? '' : s_start.address_direction) + ', ' + 
 					                 s_start.city + ', ' + 
 					                 data[:state] + ' ' + 
 					                 (s_start.zip.nil? ? '' : s_start.zip)
-					seg_addr_end   = s_end.house_number + ' ' + s_end.street_direction + ' ' +
-					                 s_end.street_name + ' ' + s_end.street_suffix + ' ' +
+					seg_addr_end   = (s_end.house_number.nil? ? '' : s_end.house_number) + ' ' + 
+					                 (s_end.street_direction.nil? ? '' : s_end.street_direction) + ' ' +
+					                 (s_end.street_name.nil? ? '' : s_end.street_name) + ' ' + 
+					                 (s_end.street_suffix.nil? ? '' : s_end.street_suffix) + ' ' +
 					                 (s_end.address_direction.nil? ? '' : s_end.address_direction) + ', ' + 
-					                 s_end.city + ', ' + data[:state] + ' ' +
+					                 s_end.city + ', ' + 
+					                 data[:state] + ' ' 
 					                 (s_end.zip.nil? ? '' : s_end.zip)
+					                 
 					loc_start = gg.locate seg_addr_start
 					loc_end   = gg.locate seg_addr_end
 	
