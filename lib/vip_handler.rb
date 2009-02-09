@@ -10,8 +10,14 @@ class VipHandler
 	# defines which top-level elements to parse
 	Topelements = ["source","state",
 	               "locality","precinct",
+	               "precinct_split", "election_administration",       #
+	               "election_official", "ballot_drop_location",       #
+	               "contest","ballot","candidate","campaign_issue",   #
+	               "campaign_statement","referendum","custom_ballot", #
+	               "ballot_response", "custom_note"                   #
 	               "polling_location","street_segment",
-	               "street_address"]
+	               "street_address"
+	               #"tabulation_area"]
 
 	# don't try to map the following ID elements to objects
 	IdExceptions = ["vip_id", "file_internal_id"]
