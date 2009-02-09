@@ -8,6 +8,7 @@ Tags handled:
  - polling_location
  - street_segment
  - street_address 
+ - contest
 
 Future work:
  - Upgrade to v1.5 (multiple polling locations per precinct and split)
@@ -16,7 +17,6 @@ Future work:
    - custom_note
    - precinct_split
    - ballot_drop_location
-   - contest
    - tabulation_area
    - ballot
    - candidate
