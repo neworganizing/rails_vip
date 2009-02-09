@@ -1,5 +1,8 @@
-class Contest < ActiveRecord::Base
+class TabulationArea < ActiveRecord::Base
+
+	acts_as_nested_set
 	belongs_to :source
-	belongs_to :tabulation_area
-	belongs_to :ballot
+	has_many :precincts
+	has_many :contests
+
 end
