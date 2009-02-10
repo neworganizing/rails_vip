@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090209221132) do
+ActiveRecord::Schema.define(:version => 20090210172303) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -24,6 +24,22 @@ ActiveRecord::Schema.define(:version => 20090209221132) do
   end
 
   add_index "ballot_drop_locations", ["source_id", "file_internal_id"], :name => "index_ballot_drop_locations_on_source_id_and_file_internal_id"
+
+  create_table "ballot_responses", :force => true do |t|
+    t.integer "source_id",        :null => false
+    t.integer "file_internal_id", :null => false
+    t.text    "text",             :null => false
+  end
+
+  add_index "ballot_responses", ["source_id", "file_internal_id"], :name => "index_ballot_responses_on_source_id_and_file_internal_id"
+
+  create_table "ballot_responses_referendums", :id => false, :force => true do |t|
+    t.integer "referendum_id",      :null => false
+    t.integer "ballot_response_id", :null => false
+  end
+
+  add_index "ballot_responses_referendums", ["ballot_response_id"], :name => "index_ballot_responses_referendums_on_ballot_response_id"
+  add_index "ballot_responses_referendums", ["referendum_id"], :name => "index_ballot_responses_referendums_on_referendum_id"
 
   create_table "ballots", :force => true do |t|
     t.integer "source_id",        :null => false
@@ -71,18 +87,18 @@ ActiveRecord::Schema.define(:version => 20090209221132) do
   add_index "candidates", ["source_id", "file_internal_id"], :name => "index_candidates_on_source_id_and_file_internal_id"
 
   create_table "contests", :force => true do |t|
-    t.integer "source_id",                                                :null => false
-    t.integer "file_internal_id",                                         :null => false
-    t.integer "election_id",                                              :null => false
-    t.integer "tabulation_area_id",                                       :null => false
-    t.string  "type",                       :limit => 30
-    t.string  "partisan",                   :limit => 10
-    t.string  "primary_party",              :limit => 100
-    t.text    "electorate_specdifications"
-    t.string  "special",                    :limit => 10
-    t.string  "office",                     :limit => 100
-    t.integer "number_elected",                            :default => 1
-    t.integer "number_voting_for",                         :default => 1
+    t.integer "source_id",                                               :null => false
+    t.integer "file_internal_id",                                        :null => false
+    t.integer "election_id",                                             :null => false
+    t.integer "tabulation_area_id",                                      :null => false
+    t.string  "type",                      :limit => 30
+    t.string  "partisan",                  :limit => 10
+    t.string  "primary_party",             :limit => 100
+    t.text    "electorate_specifications"
+    t.string  "special",                   :limit => 10
+    t.string  "office",                    :limit => 100
+    t.integer "number_elected",                           :default => 1
+    t.integer "number_voting_for",                        :default => 1
     t.integer "ballot_id"
   end
 
@@ -94,6 +110,14 @@ ActiveRecord::Schema.define(:version => 20090209221132) do
     t.string   "url_type",     :limit => 5
     t.datetime "last_checked",                :null => false
   end
+
+  create_table "custom_ballots", :force => true do |t|
+    t.integer "source_id",        :null => false
+    t.integer "file_internal_id", :null => false
+    t.text    "heading",          :null => false
+  end
+
+  add_index "custom_ballots", ["source_id", "file_internal_id"], :name => "index_custom_ballots_on_source_id_and_file_internal_id"
 
   create_table "custom_notes", :force => true do |t|
     t.integer "source_id",                      :null => false
@@ -203,6 +227,21 @@ ActiveRecord::Schema.define(:version => 20090209221132) do
 
   add_index "precincts", ["source_id", "file_internal_id"], :name => "index_precincts_on_source_id_and_file_internal_id"
 
+  create_table "referendums", :force => true do |t|
+    t.integer "source_id",                       :null => false
+    t.integer "file_internal_id",                :null => false
+    t.string  "title"
+    t.string  "subtitle"
+    t.text    "brief"
+    t.text    "text"
+    t.text    "pro_statement"
+    t.text    "con_statement"
+    t.string  "passage_threshold", :limit => 50
+    t.text    "effect_of_abstain"
+  end
+
+  add_index "referendums", ["source_id", "file_internal_id"], :name => "index_referendums_on_source_id_and_file_internal_id"
+
   create_table "sources", :force => true do |t|
     t.integer  "contrib_id"
     t.integer  "file_internal_id",    :limit => 8,                 :null => false
@@ -275,6 +314,7 @@ ActiveRecord::Schema.define(:version => 20090209221132) do
     t.string  "object_class", :null => false
     t.integer "object_id",    :null => false
     t.string  "parameter",    :null => false
+    t.integer "val"
   end
 
   add_index "unresolved_ids", ["source_id"], :name => "index_unresolved_ids_on_source_id"

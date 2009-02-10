@@ -1,3 +1,0 @@
-class contrib < XmlEntity
-  has_many :sources
-end

@@ -1,3 +1,0 @@
-class CustomNote < XmlEntity
-	belongs_to :source
-end

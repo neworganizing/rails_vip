@@ -1,5 +1,0 @@
-class TabulationAreas < XmlEntity
-	acts_as_nested_set
-	belongs_to :source
-	has_one :state
-end

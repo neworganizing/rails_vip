@@ -1,6 +1,0 @@
-class Precinct < ActiveRecord::Base
-	belongs_to :source
-	belongs_to :locality
-
-	has_one :polling_location
-end

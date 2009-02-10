@@ -1,9 +1,0 @@
-class XmlEntity 
-	extend ActiveRecord::Base
-	def missing_method(method_name, *args)
-		if () then
-		else
-			raise
-		end
-	end
-end

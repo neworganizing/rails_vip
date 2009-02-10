@@ -5,20 +5,20 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 0   #debug level
+	Debug = 5   #debug level
+
 	
 	# defines which top-level elements to parse
 	Topelements = ["source","state",
-	               "locality","precinct",
+	               "locality","precinct", "election",
 	               "precinct_split", "election_administration",       #
 	               "election_official", "ballot_drop_location",       #
 	               "contest","candidate","campaign_issue",   #
-	               "campaign_statement", #
-	               "custom_note",                  #
+	               "campaign_statement","custom_ballot",     #
+	               "custom_note","referendum",               #
 	               "polling_location","street_segment",
-	               "street_address"]
-	               #"ballot","tabulation_area","referendum","custom_ballot",
-	               #"ballot_response"]
+	               "street_address", "ballot","ballot_response"]
+	               #"tabulation_area"]
 
 	# don't try to map the following ID elements to objects
 	IdExceptions = ["vip_id", "file_internal_id"]
@@ -39,7 +39,8 @@ class VipHandler
 		end
 
 		# store object if it exists
-		if obj.has_attribute?(innerattrib) then
+		if obj.respond_to?(innerattrib) or 
+		   obj.respond_to?(innerattrib[0,innerattrib.size-3].pluralize) then
 
 			if (innerattrib[-3,3] == '_id' && !IdExceptions.include?(innerattrib))
 				#this is an ID in the file we need to map
@@ -47,6 +48,7 @@ class VipHandler
 
 				#grab attribute type from innerattrib (drop _id)
 				attribute_type = innerattrib[0,innerattrib.size-3]
+				puts attribute_type if Debug > 3
 
 				#drop start_ or end_ from attribute type of street address id's
 #				if (attribute_type.length >= 14 && attribute_type[-14,14] == 'street_address') then
@@ -54,10 +56,10 @@ class VipHandler
 #				end
 #				referenced_obj = attribute_type.camelcase.constantize.find(:first, 
 #				                    :conditions => "source_id = #{@source_id} AND file_internal_id = #{val}")
-				
-				puts obj.class
-				puts attribute_type
-				attribute_class = obj.class.reflect_on_association(attribute_type.to_sym).klass
+			
+				attr_reflection =   obj.class.reflect_on_association(attribute_type.to_sym)	
+				attr_reflection ||= obj.class.reflect_on_association(attribute_type.pluralize.to_sym)	
+				attribute_class = attr_reflection.klass
 				referenced_obj = @source_id.nil? ? nil : attribute_class.find(:first, 
 				                    :conditions => ["source_id = ? AND file_internal_id = ?", 
 				                                    @source_id, val ])
@@ -69,22 +71,47 @@ class VipHandler
 					# Add it to a table storing unresolved objects
 					badone = UnresolvedId.new do |u|
 						u.source       = @source
-#						u.object_class = attribute_type.camelcase
 						u.object_class = obj.class.name
 						u.parameter    = attrib
+						u.val          = val
 					end
 
 					# save it to a stack.  We'll store it when the object gets an ID
 					@unresolved_ids.push(badone)
 
 					puts 'Added '+innerattrib+' to resolution list.  Fail #'+@unresolved.to_s if Debug > 3
-					# save file_internal_id in place of object id
-					obj.[]=(innerattrib,val)
+
+					# save file_internal_id in place of object id, unless it's HABTM
+					obj.[]=(innerattrib,val) if obj.has_attribute?(innerattrib)
+
 					return false
 
 				else #referenced object is not nil
 					# store object id
-					obj.[]=(innerattrib,referenced_obj.id)
+					if obj.has_attribute?(innerattrib)
+						puts "Adding singular object " + innerattrib if Debug > 4
+						#not HABTM
+						obj.[]=(innerattrib,referenced_obj.id)
+					else
+						puts "Adding plural object " + innerattrib if Debug > 4
+						#HABTM
+		   				plural_attrib = innerattrib[0,innerattrib.size-3].pluralize
+						puts plural_attrib if Debug > 4
+						eval('obj.'+plural_attrib).push referenced_obj
+
+#						arr = eval('obj.'+plural_attrib) 
+#						puts "HABTM Size before: "+(arr.nil? ? '0' : arr.size.to_s) if Debug > 4
+#						arr ||= []
+#						arr << referenced_obj
+#						puts obj.inspect
+#						puts arr.inspect
+#						puts "HABTM Size after:  "+arr.size.to_s if Debug > 4
+#						obj.[]=(plural_attrib,arr) 
+#						arr = obj.[](plural_attrib) 
+#						puts "HABTM Size saved: "+(arr.nil? ? '0' : arr.size.to_s) if Debug > 4
+#						obj.save
+					end
+
 					puts 'Set '+innerattrib+' to valid object.  Success #'+@resolved.to_s if Debug > 3
 					return true
 
@@ -96,10 +123,21 @@ class VipHandler
 #				puts 'Set '+innerattrib+' to '+val.to_s if Debug > 3
 
 			else #just a normal attribute, not an object reference
-				obj.[]=(innerattrib,val)
-				puts 'Set '+innerattrib+' to '+val.to_s if Debug > 4
+
+				#TODO: Make DRY
+				if obj.has_attribute?(innerattrib)
+					#not HABTM
+					obj.[]=(innerattrib,val)
+				else
+					#HABTM
+	   				plural_attrib = innerattrib[0,innerattrib.size-3].pluralize
+					obj.[](plural_attrib) << val 
+				end
+				puts 'Set '+innerattrib+' to '+val.to_s if Debug > 5
 				return true
 			end #id check
+		else
+			puts "Ignored attribute: "+attrib if Debug > 0
 		end #attribute existence check
 
 	end #addXmlAttribute
@@ -195,6 +233,8 @@ class VipHandler
 			   @stack.push(String.new(element))
 			   @stack.push(String.new())
 			   @store_chars = true
+		else
+			puts "Ignoring element: "+element if Debug > 0
 		end
 
 	end
@@ -213,15 +253,18 @@ class VipHandler
 		unresolved_ids = @source.unresolved_ids
 #		puts unresolved_ids.size if Debug > 1
 
+		puts @unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
+
 		unresolved_ids.each do |u|
 			obj = u.object_class.constantize.find_by_id(u.object_id)	
-			if (addXmlAttribute(obj,u.parameter,obj[u.parameter])) then	
+			if (addXmlAttribute(obj,u.parameter,u.val)) then	
+				puts "Resolved" if Debug > 3
 				obj.save
 				u.destroy
 			end
 		end
 
-		puts @unresolved_ids.size
+		puts @unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
 
 		# add state_id to streets.  these eases later lookup
 		addresses = @source.street_addresses

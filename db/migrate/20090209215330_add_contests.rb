@@ -8,7 +8,7 @@ class AddContests < ActiveRecord::Migration
 		t.string  'type', :limit => 30
 		t.string  'partisan', :limit => 10
 		t.string  'primary_party', :limit => 100
-		t.text    'electorate_specdifications'
+		t.text    'electorate_specifications'
 		t.string  'special', :limit => 10
 		t.string  'office', :limit => 100
 		t.integer 'number_elected', :default => 1

@@ -1,4 +1,0 @@
-class StreetAddress < XmlEntity
-	belongs_to :streetsegment
-	belongs_to :source
-end
