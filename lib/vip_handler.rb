@@ -5,7 +5,7 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 5   #debug level
+	Debug = 2   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -59,12 +59,11 @@ class VipHandler
 			
 				attr_reflection =   obj.class.reflect_on_association(attribute_type.to_sym)	
 				attr_reflection ||= obj.class.reflect_on_association(attribute_type.pluralize.to_sym)	
-				attribute_class = attr_reflection.klass
+
+				attribute_class = attr_reflection.klass 
 				referenced_obj = @source_id.nil? ? nil : attribute_class.find(:first, 
 				                    :conditions => ["source_id = ? AND file_internal_id = ?", 
 				                                    @source_id, val ])
-				
-
 
 				if referenced_obj.nil? then
 					# we haven't found the referenced ID in the stack yet.

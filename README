@@ -1,7 +1,8 @@
-This application implements a precinct lookup from Google VIP information, based on the version 1.5 of the spec.  It is capable of importing VIP data through a rake task, and will then display polling location information on a Google Map using the ym4r/gm plugin.
-
+This application implements a precinct lookup from Google VIP information, based on the version 1.5 of the spec.  It is capable of importing VIP data through a rake task, and will then display polling location information on a Google Map using the ym4r/gm plugin.  
 
 Future work:
  - Separate app in to a presentation front-end and a plugin-based back-end handling VIP info
  - finish tag implementation
  - ignore bad tags, according to spec
+ - external links
+ - ballot candidate order import

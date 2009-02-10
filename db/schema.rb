@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090210214401) do
+ActiveRecord::Schema.define(:version => 20090210215846) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -67,6 +67,15 @@ ActiveRecord::Schema.define(:version => 20090210214401) do
   end
 
   add_index "campaign_issues", ["source_id", "file_internal_id"], :name => "index_campaign_issues_on_source_id_and_file_internal_id"
+
+  create_table "candidate_ballots", :force => true do |t|
+    t.integer "candidate_id", :null => false
+    t.integer "ballot_id"
+    t.integer "order"
+  end
+
+  add_index "candidate_ballots", ["ballot_id"], :name => "index_candidate_ballots_on_ballot_id"
+  add_index "candidate_ballots", ["candidate_id"], :name => "index_candidate_ballots_on_candidate_id"
 
   create_table "candidate_statements", :force => true do |t|
     t.integer "source_id",         :null => false
