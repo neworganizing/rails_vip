@@ -97,6 +97,9 @@ class VipHandler
 						#HABTM
 		   				plural_attrib = innerattrib[0,innerattrib.size-3].pluralize
 						puts plural_attrib if Debug > 4
+#						puts referenced_obj.inspect if Debug > 4
+						puts eval('obj.'+plural_attrib).inspect if Debug > 4
+						
 						eval('obj.'+plural_attrib).push referenced_obj
 
 #						arr = eval('obj.'+plural_attrib) 

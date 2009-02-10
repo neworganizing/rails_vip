@@ -72,7 +72,7 @@ class PrecinctController < ApplicationController
 			@ss = StreetSegment.new.find_by_address(data)
 			if (!@ss.nil?) then
 				@precinct = @ss.precinct
-				@polling_location = @precinct.polling_location
+				@polling_location = @precinct.polling_locations.first
 			
 				address_versions = []
 				address_versions.push @polling_location.name + ', '+@polling_location.address+', '+data[:city]+', '+data[:state] 

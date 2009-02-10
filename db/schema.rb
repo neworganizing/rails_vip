@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090210172303) do
+ActiveRecord::Schema.define(:version => 20090210214401) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(:version => 20090210172303) do
   end
 
   add_index "ballot_responses", ["source_id", "file_internal_id"], :name => "index_ballot_responses_on_source_id_and_file_internal_id"
+
+  create_table "ballot_responses_custom_ballots", :id => false, :force => true do |t|
+    t.integer "ballot_response_id", :null => false
+    t.integer "custom_ballot_id",   :null => false
+  end
+
+  add_index "ballot_responses_custom_ballots", ["ballot_response_id"], :name => "index_ballot_responses_custom_ballots_on_ballot_response_id"
+  add_index "ballot_responses_custom_ballots", ["custom_ballot_id"], :name => "index_ballot_responses_custom_ballots_on_custom_ballot_id"
 
   create_table "ballot_responses_referendums", :id => false, :force => true do |t|
     t.integer "referendum_id",      :null => false
@@ -200,6 +208,22 @@ ActiveRecord::Schema.define(:version => 20090210172303) do
 
   add_index "polling_locations", ["source_id", "file_internal_id"], :name => "index_polling_locations_on_source_id_and_file_internal_id"
 
+  create_table "polling_locations_precinct_splits", :id => false, :force => true do |t|
+    t.integer "polling_location_id", :null => false
+    t.integer "precinct_split_id",   :null => false
+  end
+
+  add_index "polling_locations_precinct_splits", ["polling_location_id"], :name => "index_polling_locations_precinct_splits_on_polling_location_id"
+  add_index "polling_locations_precinct_splits", ["precinct_split_id"], :name => "index_polling_locations_precinct_splits_on_precinct_split_id"
+
+  create_table "polling_locations_precincts", :id => false, :force => true do |t|
+    t.integer "polling_location_id", :null => false
+    t.integer "precinct_id",         :null => false
+  end
+
+  add_index "polling_locations_precincts", ["polling_location_id"], :name => "index_polling_locations_precincts_on_polling_location_id"
+  add_index "polling_locations_precincts", ["precinct_id"], :name => "index_polling_locations_precincts_on_precinct_id"
+
   create_table "precinct_ballot_drop_locations", :force => true do |t|
     t.integer "precinct_id",                          :null => false
     t.integer "ballot_drop_location_id", :limit => 8, :null => false
@@ -207,22 +231,20 @@ ActiveRecord::Schema.define(:version => 20090210172303) do
 
   create_table "precinct_splits", :force => true do |t|
     t.integer "source_id"
-    t.integer "file_internal_id",    :limit => 8
-    t.string  "name",                :limit => 256
+    t.integer "file_internal_id", :limit => 8
+    t.string  "name",             :limit => 256
     t.integer "precinct_id"
-    t.integer "polling_location_id"
   end
 
   add_index "precinct_splits", ["source_id", "file_internal_id"], :name => "index_precinct_splits_on_source_id_and_file_internal_id"
 
   create_table "precincts", :force => true do |t|
-    t.integer "source_id",                                          :null => false
-    t.integer "file_internal_id",    :limit => 8,                   :null => false
-    t.string  "name",                               :default => "", :null => false
-    t.integer "locality_id",         :limit => 8,                   :null => false
-    t.string  "ward",                :limit => 127
-    t.string  "mail_only",           :limit => 3
-    t.integer "polling_location_id", :limit => 8
+    t.integer "source_id",                                       :null => false
+    t.integer "file_internal_id", :limit => 8,                   :null => false
+    t.string  "name",                            :default => "", :null => false
+    t.integer "locality_id",      :limit => 8,                   :null => false
+    t.string  "ward",             :limit => 127
+    t.string  "mail_only",        :limit => 3
   end
 
   add_index "precincts", ["source_id", "file_internal_id"], :name => "index_precincts_on_source_id_and_file_internal_id"
