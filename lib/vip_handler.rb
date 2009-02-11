@@ -5,7 +5,7 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 2   #debug level
+	Debug = 20   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -17,8 +17,8 @@ class VipHandler
 	               "campaign_statement","custom_ballot",     #
 	               "custom_note","referendum",               #
 	               "polling_location","street_segment",
-	               "street_address", "ballot","ballot_response"]
-	               #"tabulation_area"]
+	               "street_address", "ballot","ballot_response",
+	               "tabulation_area"]
 
 	# don't try to map the following ID elements to objects
 	IdExceptions = ["vip_id", "file_internal_id"]
@@ -97,6 +97,7 @@ class VipHandler
 		   				plural_attrib = innerattrib[0,innerattrib.size-3].pluralize
 						puts plural_attrib if Debug > 4
 #						puts referenced_obj.inspect if Debug > 4
+						
 						puts eval('obj.'+plural_attrib).inspect if Debug > 4
 						
 						eval('obj.'+plural_attrib).push referenced_obj

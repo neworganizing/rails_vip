@@ -5,4 +5,6 @@ class Locality < ActiveRecord::Base
 	belongs_to :election_administration
 	belongs_to :state
 
+	has_and_belongs_to_many :tabulation_areas
+
 end
