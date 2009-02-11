@@ -15,12 +15,14 @@ class Precinct < ActiveRecord::Base
 		:file_internal_id,
 		:locality_id
 
+	# Defaults mail_only to 'no' if ward is nil, per spec
 	def before_save
 		if (self.ward.nil? && self.mail_only.nil?) then
 			self.mail_only = "no"
 		end
 	end
 
+	# Uses StreetSegment.find_by_address to return a street segment based on an address
 	def find_by_address(address)
 		ss = StreetSegment.new.find_by_address(address)
 		ss.nil? ? nil : ss.precinct
