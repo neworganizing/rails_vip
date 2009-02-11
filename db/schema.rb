@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090211162005) do
+ActiveRecord::Schema.define(:version => 20090211170838) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -224,6 +224,14 @@ ActiveRecord::Schema.define(:version => 20090211162005) do
 
   add_index "localities", ["source_id", "file_internal_id"], :name => "index_localities_on_source_id_and_file_internal_id"
 
+  create_table "localities_tabulation_areas", :id => false, :force => true do |t|
+    t.integer "locality_id",        :null => false
+    t.integer "tabulation_area_id", :null => false
+  end
+
+  add_index "localities_tabulation_areas", ["locality_id"], :name => "index_localities_tabulation_areas_on_locality_id"
+  add_index "localities_tabulation_areas", ["tabulation_area_id"], :name => "index_localities_tabulation_areas_on_tabulation_area_id"
+
   create_table "polling_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
     t.integer "file_internal_id", :limit => 8, :null => false
@@ -265,6 +273,14 @@ ActiveRecord::Schema.define(:version => 20090211162005) do
 
   add_index "precinct_splits", ["source_id", "file_internal_id"], :name => "index_precinct_splits_on_source_id_and_file_internal_id"
 
+  create_table "precinct_splits_tabulation_areas", :id => false, :force => true do |t|
+    t.integer "precinct_split_id",  :null => false
+    t.integer "tabulation_area_id", :null => false
+  end
+
+  add_index "precinct_splits_tabulation_areas", ["precinct_split_id"], :name => "index_precinct_splits_tabulation_areas_on_precinct_split_id"
+  add_index "precinct_splits_tabulation_areas", ["tabulation_area_id"], :name => "index_precinct_splits_tabulation_areas_on_tabulation_area_id"
+
   create_table "precincts", :force => true do |t|
     t.integer "source_id",                                       :null => false
     t.integer "file_internal_id", :limit => 8,                   :null => false
@@ -275,6 +291,14 @@ ActiveRecord::Schema.define(:version => 20090211162005) do
   end
 
   add_index "precincts", ["source_id", "file_internal_id"], :name => "index_precincts_on_source_id_and_file_internal_id"
+
+  create_table "precincts_tabulation_areas", :id => false, :force => true do |t|
+    t.integer "precinct_id",        :null => false
+    t.integer "tabulation_area_id", :null => false
+  end
+
+  add_index "precincts_tabulation_areas", ["precinct_id"], :name => "index_precincts_tabulation_areas_on_precinct_id"
+  add_index "precincts_tabulation_areas", ["tabulation_area_id"], :name => "index_precincts_tabulation_areas_on_tabulation_area_id"
 
   create_table "referendums", :force => true do |t|
     t.integer "source_id",                       :null => false
