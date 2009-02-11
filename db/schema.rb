@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090210215846) do
+ActiveRecord::Schema.define(:version => 20090211162005) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -24,6 +24,14 @@ ActiveRecord::Schema.define(:version => 20090210215846) do
   end
 
   add_index "ballot_drop_locations", ["source_id", "file_internal_id"], :name => "index_ballot_drop_locations_on_source_id_and_file_internal_id"
+
+  create_table "ballot_drop_locations_precincts", :id => false, :force => true do |t|
+    t.integer "ballot_drop_location_id", :null => false
+    t.integer "precinct_id",             :null => false
+  end
+
+  add_index "ballot_drop_locations_precincts", ["ballot_drop_location_id"], :name => "index_ballot_drop_locations_precincts_on_ballot_drop_location_id"
+  add_index "ballot_drop_locations_precincts", ["precinct_id"], :name => "index_ballot_drop_locations_precincts_on_precinct_id"
 
   create_table "ballot_responses", :force => true do |t|
     t.integer "source_id",        :null => false
@@ -53,6 +61,8 @@ ActiveRecord::Schema.define(:version => 20090210215846) do
     t.integer "source_id",        :null => false
     t.integer "file_internal_id", :null => false
     t.string  "write_in"
+    t.integer "referendum_id"
+    t.integer "custom_ballot_id"
   end
 
   add_index "ballots", ["source_id", "file_internal_id"], :name => "index_ballots_on_source_id_and_file_internal_id"
@@ -120,6 +130,14 @@ ActiveRecord::Schema.define(:version => 20090210215846) do
   end
 
   add_index "contests", ["source_id", "file_internal_id"], :name => "index_contests_on_source_id_and_file_internal_id"
+
+  create_table "contests_ballots", :id => false, :force => true do |t|
+    t.integer "contest_id", :null => false
+    t.integer "ballot_id",  :null => false
+  end
+
+  add_index "contests_ballots", ["ballot_id"], :name => "index_contests_ballots_on_ballot_id"
+  add_index "contests_ballots", ["contest_id"], :name => "index_contests_ballots_on_contest_id"
 
   create_table "contribs", :force => true do |t|
     t.string   "name",         :limit => 128

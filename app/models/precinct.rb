@@ -3,6 +3,7 @@ class Precinct < ActiveRecord::Base
 	belongs_to :locality
 
 	has_and_belongs_to_many :polling_locations
+	has_and_belongs_to_many :ballot_drop_locations
 
 	has_many :precinct_splits
 	has_many :street_segments

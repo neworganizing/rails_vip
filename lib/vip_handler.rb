@@ -139,7 +139,7 @@ class VipHandler
 				return true
 			end #id check
 		else
-			puts "Ignored attribute: "+attrib if Debug > 0
+			puts "Ignored "+attrib+" in " +obj.class.name if Debug > 0
 		end #attribute existence check
 
 	end #addXmlAttribute
