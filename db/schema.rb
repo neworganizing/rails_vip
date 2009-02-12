@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090211170838) do
+ActiveRecord::Schema.define(:version => 20090211205741) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -341,17 +341,20 @@ ActiveRecord::Schema.define(:version => 20090211170838) do
   add_index "states", ["source_id", "file_internal_id"], :name => "index_states_on_source_id_and_file_internal_id"
 
   create_table "street_addresses", :force => true do |t|
-    t.integer "source_id",                                        :null => false
-    t.integer "file_internal_id",  :limit => 8,                   :null => false
-    t.string  "house_number",      :limit => 25
-    t.string  "street_direction",  :limit => 25
+    t.integer "source_id",                                            :null => false
+    t.integer "file_internal_id",      :limit => 8,                   :null => false
+    t.string  "house_number",          :limit => 25
+    t.string  "street_direction",      :limit => 25
     t.string  "street_name"
-    t.string  "street_suffix",     :limit => 25
-    t.string  "address_direction", :limit => 25
-    t.string  "apartment",         :limit => 25
-    t.string  "city",              :limit => 100, :default => "", :null => false
-    t.string  "zip",               :limit => 9
+    t.string  "street_suffix",         :limit => 25
+    t.string  "address_direction",     :limit => 25
+    t.string  "apartment",             :limit => 25
+    t.string  "city",                  :limit => 100, :default => "", :null => false
+    t.string  "zip",                   :limit => 9
     t.integer "state_id"
+    t.integer "std_house_number"
+    t.string  "std_house_number_suff"
+    t.string  "std_street_name"
   end
 
   add_index "street_addresses", ["source_id", "file_internal_id"], :name => "index_street_addresses_on_source_id_and_file_internal_id"

@@ -1,11 +1,13 @@
 class VipHandler 
 	# Parses Voting Information Project format version 1.4
 	
-#	require 'rubyprof'
+	require 'rubygems'
+	require 'ruby-prof'	
+	require 'libxml'
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 20   #debug level
+	Debug = 0   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -101,18 +103,6 @@ class VipHandler
 						puts eval('obj.'+plural_attrib).inspect if Debug > 4
 						
 						eval('obj.'+plural_attrib).push referenced_obj
-
-#						arr = eval('obj.'+plural_attrib) 
-#						puts "HABTM Size before: "+(arr.nil? ? '0' : arr.size.to_s) if Debug > 4
-#						arr ||= []
-#						arr << referenced_obj
-#						puts obj.inspect
-#						puts arr.inspect
-#						puts "HABTM Size after:  "+arr.size.to_s if Debug > 4
-#						obj.[]=(plural_attrib,arr) 
-#						arr = obj.[](plural_attrib) 
-#						puts "HABTM Size saved: "+(arr.nil? ? '0' : arr.size.to_s) if Debug > 4
-#						obj.save
 					end
 
 					puts 'Set '+innerattrib+' to valid object.  Success #'+@resolved.to_s if Debug > 3
@@ -127,7 +117,10 @@ class VipHandler
 
 			else #just a normal attribute, not an object reference
 
-				#TODO: Make DRY
+				#don't store unnecessary white space
+				val.strip!
+
+				#TODO: Make DRY.  Actually, why would there be a HABTM here?
 				if obj.has_attribute?(innerattrib)
 					#not HABTM
 					obj.[]=(innerattrib,val)
@@ -145,7 +138,7 @@ class VipHandler
 
 	end #addXmlAttribute
 
-	def initialize()
+	def initialize(contributor = nil)
 		#debug
 		@resolved = 0
 		@unresolved = 0
@@ -163,7 +156,7 @@ class VipHandler
 		#array to store id's not resolved from file_internal_id to database id's
 		@unresolved_ids = []
 
-#		@contrib = contributor
+		@contrib = contributor
 
 	end
 
@@ -191,7 +184,7 @@ class VipHandler
 		   @stack.push(obj)
 
 #TODO: optimize insertions
-=begin  #Stuff for profiling speed
+begin  #Stuff for profiling speed
 		if (element == 'street_address')
 			if @lastelement && @lastelement > 100 then
 		#		Profiler__::stop_profile
@@ -230,7 +223,7 @@ class VipHandler
 			@elementcount += 1
 	           end
 		end
-=end			
+end			
 
 		elsif (@stack.size == 1) then # && Innerelements.include?(element)) then
 			   @stack.push(String.new(element))
@@ -277,6 +270,7 @@ class VipHandler
 		end
 
 		@source.import_completed_at = Time.now
+		@source.contrib = @contrib unless @contrib.nil?
 		@source.save
 
 		# MySQL specific one-liner

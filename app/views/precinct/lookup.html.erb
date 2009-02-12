@@ -12,7 +12,7 @@
 	<td><%= text_field_tag "city", @params[:city]  %></td>
 </tr><tr>
 	<td><%= label_tag "state", "State"%></td>
-	<td><%= text_field_tag "state", @params[:state], :size => "2" %></td>
+	<td><%= select_tag "state", options_for_select(@STATES) %></td>
 </tr>
 </table>
 <%= submit_tag "Find Polling Place" %>

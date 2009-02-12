@@ -2,6 +2,59 @@ class PrecinctController < ApplicationController
 	layout 'layouts/main'
 	POLL_URL = 'http://www.martintod.org.uk/blog/LDballotBox.png'
 	HOME_URL = 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png'
+	STATES = [
+		[ "AL", "Alabama" ],
+		  [ "AK", "Alaska" ],
+		  [ "AZ", "Arizona" ],
+		  [ "AR", "Arkansas" ],
+		  [ "CA", "California" ],
+		  [ "CO", "Colorado" ],
+		  [ "CT", "Connecticut" ],
+		  [ "DE", "Delaware" ],
+		  [ "FL", "Florida" ],
+		  [ "GA", "Georgia" ],
+		  [ "HI", "Hawaii" ],
+		  [ "ID", "Idaho" ],
+		  [ "IL", "Illinois" ],
+		  [ "IN", "Indiana" ],
+		  [ "IA", "Iowa" ],
+		  [ "KS", "Kansas" ],
+		  [ "KY", "Kentucky" ],
+		  [ "LA", "Louisiana" ],
+		  [ "ME", "Maine" ],
+		  [ "MD", "Maryland" ],
+		  [ "MA", "Massachusetts" ],
+		  [ "MI", "Michigan" ],
+		  [ "MN", "Minnesota" ],
+		  [ "MS", "Mississippi" ],
+		  [ "MO", "Missouri" ],
+		  [ "MT", "Montana" ],
+		  [ "NE", "Nebraska" ],
+		  [ "NV", "Nevada" ],
+		  [ "NH", "New Hampshire" ],
+		  [ "NJ", "New Jersey" ],
+		  [ "NM", "New Mexico" ],
+		  [ "NY", "New York" ],
+		  [ "NC", "North Carolina" ],
+		  [ "ND", "North Dakota" ],
+		  [ "OH", "Ohio" ],
+		  [ "OK", "Oklahoma" ],
+		  [ "OR", "Oregon" ],
+		  [ "PA", "Pennsylvania" ],
+		  [ "RI", "Rhode Island" ],
+		  [ "SC", "South Carolina" ],
+		  [ "SD", "South Dakota" ],
+		  [ "TN", "Tennessee" ],
+		  [ "TX", "Texas" ],
+		  [ "UT", "Utah" ],
+		  [ "VT", "Vermont" ],
+		  [ "VA", "Virginia" ],
+		  [ "WA", "Washington" ],
+		  [ "WV", "West Virginia" ],
+		  [ "WI", "Wisconsin" ],
+		  [ "WY", "Wyoming" ]
+  		]
+
 	require 'rubygems'
 	require 'google_geocode'
 	def show
@@ -20,6 +73,8 @@ class PrecinctController < ApplicationController
 		@params[:street]     ||= ''
 		@params[:city]       ||= ''
 		@params[:state]      ||= ''
+		@STATES = [['','']]+STATES
+
 		if request.post?
 
 			@map = GMap.new('map_div')
