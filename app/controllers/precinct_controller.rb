@@ -57,6 +57,7 @@ class PrecinctController < ApplicationController
 
 	require 'rubygems'
 	require 'google_geocode'
+
 	def show
 		@precinct = Precinct.find(params[:id])
 		@polling_location = @precinct.polling_location
@@ -66,6 +67,7 @@ class PrecinctController < ApplicationController
 			render :action => "show_poll"
 		end
 	end
+
 	def lookup
 		#set defaults
 		@params ||= params
@@ -130,14 +132,14 @@ class PrecinctController < ApplicationController
 				@polling_location = @precinct.polling_locations.first
 			
 				address_versions = []
-				address_versions.push @polling_location.name + ', '+@polling_location.address+', '+data[:city]+', '+data[:state] 
-				address_versions.push @polling_location.name + ', '+@polling_location.address+', '+data[:state]
-				address_versions.push @polling_location.address+', '+data[:city]+', '+data[:state] 
-				address_versions.push @polling_location.address+', '+data[:state]
+				address_versions.push @polling_location.name    + ', ' + @polling_location.address + ', ' +data[:city] + ', ' + data[:state] 
+				address_versions.push @polling_location.name    + ', ' + @polling_location.address + ', ' +data[:state]
+				address_versions.push @polling_location.address + ', ' + data[:city] +               ', ' +data[:state] 
+				address_versions.push @polling_location.address + ', ' + data[:state]
 				address_versions.push @polling_location.address
-	
+
 				@polling_loc_std = nil
-	
+
 				address_versions.each do |addr|
 					if @polling_loc_std.nil? then
 						begin
@@ -214,7 +216,7 @@ class PrecinctController < ApplicationController
 					                                 GLatLng.new([loc_end.latitude,   loc_end.longitude])]))
 					                                
 		
-				end #seg
+				end #segment
 				if (!@polling_loc_std.nil?) then
 					#find bounding box to include polling 
 					#and home addresses

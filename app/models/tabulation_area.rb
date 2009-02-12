@@ -8,15 +8,19 @@ class TabulationArea < ActiveRecord::Base
 	has_and_belongs_to_many :localities
 	has_many :tabulation_areas
 	has_many :contests
+	alias_attribute :state, :statewide_state
 
 	def tabulation_areas
 		self.children
 	end
 
-	def state
-		self.statewide_state	
+	# get all tabulation areas below this one
+	def all_children
+		self.children + self.children.each {|child| child.all_children}.collect
 	end
-	def state=(newstate)
-		self.statewide_state = newstate 
+
+	# get all tabulation areas above this one
+	def parents
+		self.parent.nil? ? [] : self.parent + self.parent.parents
 	end
 end

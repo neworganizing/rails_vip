@@ -18,22 +18,22 @@ class StreetAddress < ActiveRecord::Base
 
 		# split street name
 		# search for already established suffixes if they're available
-		suff_search = street_suffix
-		suff_search ||= '('+StreetSuffixes.join('|')+')'
-		street_direction_search   = street_direction
-		street_direction_search ||= '('+Directions.join('|')+')'
-		addr_direction_search     = address_direction
-		addr_direction_search   ||= '('+Directions.join('|')+')'
+		suff_search = street_suffix.nil? ? StreetSuffixes.join('|') : street_suffix 
+		street_direction_search   = street_direction.nil? ?  Directions.join('|') : street_direction
+		addr_direction_search     = address_direction.nil? ? Directions.join('|') : address_direction
 		
-		address_split_regex_str = "^(#{street_direction_search} )?(.*?)( #{suff_search})?( #{addr_direction_search})?$"
+		address_split_regex_str = "^((#{street_direction_search}) )?(.*?)( (#{suff_search}))?( (#{addr_direction_search}))?$"
 		address_split_regex = Regexp.new(address_split_regex_str,true)
 		
 		address_split_regex.match(street_name)
+		puts address_split_regex_str
+		puts street_name
 		
 		self.street_direction  ||= Regexp.last_match(1).nil? || Regexp.last_match(1).eql?('') ? nil : Regexp.last_match(2) 
 		self.std_street_name     = Regexp.last_match(3).nil? || Regexp.last_match(3).eql?('') ? nil : Regexp.last_match(3) 
 		self.street_suffix     ||= Regexp.last_match(4).nil? || Regexp.last_match(4).eql?('') ? nil : Regexp.last_match(5) 
 		self.address_direction ||= Regexp.last_match(6).nil? || Regexp.last_match(6).eql?('') ? nil : Regexp.last_match(7) 
+		puts self.std_street_name
 	end
 
 

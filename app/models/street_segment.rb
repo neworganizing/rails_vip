@@ -26,8 +26,8 @@ class StreetSegment < ActiveRecord::Base
 		                                     street_segments.odd_even_both IN (?, 'both') AND 
 			                             start.city = ? AND end.city = ? AND
 		                                     s.name = ?", 
-		                                     street_num, street_num, 
 			                             street_name, street_name, 
+		                                     street_num, street_num, 
 			                             even_odd, city, city, state]
 		)
 		

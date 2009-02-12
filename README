@@ -2,7 +2,10 @@ This application implements a precinct lookup from Google VIP information, based
 
 Future work:
  - Separate app in to a presentation front-end and a plugin-based back-end handling VIP info
- - finish tag implementation
  - ignore bad tags, according to spec
  - external links
  - ballot candidate order import
+
+
+More information on the VIP is available here:
+http://www.votinginfoproject.org/
