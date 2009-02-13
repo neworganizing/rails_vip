@@ -18,44 +18,70 @@
 <%= submit_tag "Find Polling Place" %>
 <% end%>
 </div>
-<% if @loc then %>
+<% if !@loc.nil? or !@precinct.nil? then %>
 <br/>
 
 <div id="maptable" style="float:left">
 <table class="maptable">
+	<% if !@loc.nil? %>
 	<tr>
 		<td class="maptable"><b>Your Address: </b></td>
 		<td class="maptable"><%=h @loc.address %></td>
 	</tr>
+	<% end %>
 <% if !@precinct.nil? then %>
-	<tr class="maptable"><td><b>Precinct: </b></td>
-		<td> Name: <%= @precinct.name %><br/>
-		Ward: <%= @precinct.ward %><br/>
-		File ID: <%= @precinct.file_internal_id%><br/>
-		ID: <%= @precinct.id %><br/>
-		</td>
-	</tr>
 	<tr>
 		<td><b>Locality (County): </b></td>
 		<td> <%= @precinct.locality.name %><br/>
 		</td>
 	</tr>
-<% end %>
-<% if !@polling_location.nil? then %>
-	<tr>
-		<td><b>Polling Location: </b></td>
-<td><%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
-<%= @polling_location.address.nil?       ? '' : @polling_location.address + '<br/>'%>
-<%= @polling_location.directions.nil?    ? '' : @polling_location.directions+ '<br/>' %>
-<%=h @polling_location.polling_hours.nil? ? '' : @polling_location.polling_hours+ '<br/>' %>
+	<tr class="maptable"><td><b>Precinct: </b></td>
+		<td> Name: <%= @precinct.name %><br/>
+		<%= @precinct.ward.nil? ? '' : 'Ward: ' + @precinct.ward + '<br/>' %>
+		File ID: <%= @precinct.file_internal_id%><br/>
+		ID: <%= @precinct.id %><br/>
 		</td>
 	</tr>
+<% if !@split.nil? then %>
+	<tr>
+		<td><b>Precinct Split:</b></td>
+		<td><%= @split.name %></td>
+	</tr>
+<% end %>
+<% end %>
+	<% if !@polling_location.nil? then %>
+	<tr>
+		<td><b>Polling Location: </b></td>
+		<td>
+			<%= @polling_location.name.nil?          ? '' : @polling_location.name + '<br/>'%>
+			<%= @polling_location.address.nil?       ? '' : @polling_location.address + '<br/>'%>
+			<%= @polling_location.directions.nil?    ? '' : @polling_location.directions+ '<br/>' %>
+			<%= @polling_location.polling_hours.nil? ? '' : @polling_location.polling_hours+ '<br/>' %>
+		</td>
+	</tr>
+	<% if !@polling_loc_std.nil? %>
 	<tr>	
 		<td><b>Poll Marker at:</b></td>
 		<td>
-<%= @polling_loc_std.nil?          ? '' : @polling_loc_std.address + '<br/>'%>
+		<%= @polling_loc_std.address%>
 		</td>
 	</tr>
+	<% end %>
+	<% if !@contests.nil? and @contests.size > 0 %>
+	<tr><td colspan="2" align="center"><b>Elections<b></td>
+	</tr>
+		<% @contests.each do |c| %>
+		<tr> 
+			<td><b><%=h c.election.date %></b></td>
+			<td><%= c.type %>, <%= c.office.nil? ? '' : c.office %>
+			<% if !c.ballot.nil? and c.ballot.candidates.size > 0 then c.ballot.candidates.each do |cand| %>
+				<br/><%= cand.name %>
+			<% end %>
+			<% end %>
+			</td>
+		</tr>
+		<% end %>
+	<% end %>
 <% end %>
 </table>
 </div>

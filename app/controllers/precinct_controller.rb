@@ -78,6 +78,7 @@ class PrecinctController < ApplicationController
 		@STATES = [['','']]+STATES
 
 		if request.post?
+			puts "got request"
 
 			@map = GMap.new('map_div')
 			@map.icon_global_init(GIcon.new(
@@ -112,6 +113,7 @@ class PrecinctController < ApplicationController
 			#standardize address
 			gg = GoogleGeocode.new "ABQIAAAAu7Re6QJVDQ3U5Sp2u2w3UhSwMyR9mQOTO__cwzDlnGLWnDHQaxQofqAx35lKdPCM1ODtbttHZKOR3Q"	
 			begin
+				puts input_address
 				@loc = gg.locate input_address
 				homeaddress = @loc.address
 
@@ -122,13 +124,17 @@ class PrecinctController < ApplicationController
 				                    :icon => icon_home))
 				@map.control_init(:large_map => true, :map_type => true)
 				@map.center_zoom_init([@loc.latitude, @loc.longitude],15)
+				puts "got loc"
 			rescue
 			end
 			
 			#still just a string, but at least it looks good 
 			@ss = StreetSegment.new.find_by_address(data)
 			if (!@ss.nil?) then
-				@precinct = @ss.precinct
+				puts "got ss"
+				@split    = @ss.precinct_split
+				@precinct = @split.nil? ? @ss.precinct : @split.precinct 
+				@contests = @split.nil? ? @precinct.contests : @split.contests
 				@polling_location = @precinct.polling_locations.first
 			
 				address_versions = []
@@ -153,6 +159,7 @@ class PrecinctController < ApplicationController
 			end #!ss.nil?
 
 			if (!@polling_loc_std.nil?) then
+				puts "got polling_loc_std"
 				#find bounding box to include polling 
 				#and home addresses
 				sw = GLatLng.new([[@polling_loc_std.latitude, @loc.latitude].max,

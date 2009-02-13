@@ -28,6 +28,9 @@ class Precinct < ActiveRecord::Base
 		ss.nil? ? nil : ss.precinct
 	end
 
-
-
+	# return all contests that apply to this precinct
+	def contests
+		all_tabs = [tabulation_areas.collect{|t| t.parents} + tabulation_areas].flatten
+		all_tabs.collect{|t| t.contests}.flatten.uniq
+	end
 end

@@ -3,5 +3,5 @@ class Contest < ActiveRecord::Base
 	belongs_to :source
 	belongs_to :tabulation_area
 	belongs_to :ballot
-	has_and_belongs_to_many :election
+	belongs_to :election
 end
