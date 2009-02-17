@@ -26,4 +26,15 @@ class Source < ActiveRecord::Base
 		@parser.callbacks = VipHandler.new
 		@parser.parse
 	end
+
+	def activate!
+		self.active = 1
+		self.save
+	end
+	def deactivate!
+		self.active = 0
+	end
+	def active?
+		(self.active == 1) ? true : false
+	end
 end

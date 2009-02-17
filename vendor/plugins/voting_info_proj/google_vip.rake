@@ -49,6 +49,9 @@ namespace :google_vip do
 				#assume that the .zip file is named the same as the file it contains
 				xmlfile = fullfile[0 .. fullfile.length - 5]
 				xmlname = filename[0 .. filename.length - 5]
+				unless (xmlname[xmlname.length - 3 .. xmlname.length - 5].eql?("xml"))
+					xmlname = xmlname + ".xml"
+				end
 				open(xmlfile, "wb") { |fyle|
 					Zip::ZipFile.open(fullfile) {|f|
 						fyle.write(f.read(xmlname))

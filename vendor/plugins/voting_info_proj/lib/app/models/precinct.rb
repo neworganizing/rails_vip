@@ -24,7 +24,7 @@ class Precinct < ActiveRecord::Base
 
 	# Uses StreetSegment.find_by_address to return a street segment based on an address
 	def find_by_address(address)
-		ss = StreetSegment.new.find_by_address(address)
+		ss = StreetSegment.find_by_address(address)
 		ss.nil? ? nil : ss.precinct
 	end
 

@@ -26,14 +26,11 @@ class StreetAddress < ActiveRecord::Base
 		address_split_regex = Regexp.new(address_split_regex_str,true)
 		
 		address_split_regex.match(street_name)
-		puts address_split_regex_str
-		puts street_name
 		
 		self.street_direction  ||= Regexp.last_match(1).nil? || Regexp.last_match(1).eql?('') ? nil : Regexp.last_match(2) 
 		self.std_street_name     = Regexp.last_match(3).nil? || Regexp.last_match(3).eql?('') ? nil : Regexp.last_match(3) 
 		self.street_suffix     ||= Regexp.last_match(4).nil? || Regexp.last_match(4).eql?('') ? nil : Regexp.last_match(5) 
 		self.address_direction ||= Regexp.last_match(6).nil? || Regexp.last_match(6).eql?('') ? nil : Regexp.last_match(7) 
-		puts self.std_street_name
 	end
 
 

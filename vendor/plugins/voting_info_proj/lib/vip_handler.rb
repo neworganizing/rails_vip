@@ -7,7 +7,7 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 0   #debug level
+	Debug = 4   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -184,7 +184,7 @@ class VipHandler
 		   @stack.push(obj)
 
 #TODO: optimize insertions
-begin  #Stuff for profiling speed
+=begin  #Stuff for profiling speed
 		if (element == 'street_address')
 			if @lastelement && @lastelement > 100 then
 		#		Profiler__::stop_profile
@@ -223,7 +223,7 @@ begin  #Stuff for profiling speed
 			@elementcount += 1
 	           end
 		end
-end			
+=end			
 
 		elsif (@stack.size == 1) then # && Innerelements.include?(element)) then
 			   @stack.push(String.new(element))
@@ -271,6 +271,7 @@ end
 
 		@source.import_completed_at = Time.now
 		@source.contrib = @contrib unless @contrib.nil?
+		@source.activate!
 		@source.save
 
 		# MySQL specific one-liner
