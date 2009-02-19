@@ -136,6 +136,7 @@ class PrecinctController < ApplicationController
 				@precinct = @split.nil? ? @ss.precinct : @split.precinct 
 				@contests = @split.nil? ? @precinct.contests : @split.contests
 				@polling_location = @precinct.polling_locations.first
+				@ev_locs = @precinct.ballot_drop_locations
 			
 				address_versions = []
 				address_versions.push @polling_location.name    + ', ' + @polling_location.address + ', ' +data[:city] + ', ' + data[:state] 
@@ -224,6 +225,7 @@ class PrecinctController < ApplicationController
 					                                
 		
 				end #segment
+
 				if (!@polling_loc_std.nil?) then
 					#find bounding box to include polling 
 					#and home addresses

@@ -7,7 +7,7 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = 4   #debug level
+	Debug = ENV['VIP_DEBUG'] || 0   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -31,8 +31,7 @@ class VipHandler
 	# the case of id's. 
 	# * Maps element's ID to file_internal_id
 	# * Overwrites IDs referenced by elements to database internal IDs
-
-	def addXmlAttribute(obj, attrib, val)
+	def add_xml_attribute(obj, attrib, val)
 		if (attrib.eql?("id"))
 			puts attrib if Debug > 4
 			innerattrib = "file_internal_id"
@@ -136,8 +135,11 @@ class VipHandler
 			puts "Ignored "+attrib+" in " +obj.class.name if Debug > 0
 		end #attribute existence check
 
-	end #addXmlAttribute
+	end #add_xml_attribute
 
+
+	# sets several variables used in the rest of the application.  also
+	# links source to contributor if defined
 	def initialize(contributor = nil)
 		#debug
 		@resolved = 0
@@ -157,9 +159,13 @@ class VipHandler
 		@unresolved_ids = []
 
 		@contrib = contributor
-
 	end
 
+	# this parser callback function decides where to send a new element.  If the parser
+	# is not already in a top-level element, it will process if the element is in 
+	# Topelements. If we are in a top-level element, it directs the parser to start
+	# storing characters.  Additionally, if attributes are specified within tags, it 
+	# directs them to add_xml_attribute
 	def on_start_element_ns(element, attributes, prefix, uri, namespaces)
 		element.downcase!
 		puts "Start "+element.downcase if Debug > 2
@@ -179,7 +185,7 @@ class VipHandler
 		   #store attributes inside start tag
 		   attributes.each {|k,v| 
 			   puts k if Debug > 4
-			   addXmlAttribute(obj,k,v)
+			   add_xml_attribute(obj,k,v)
 		   }
 		   @stack.push(obj)
 
@@ -235,6 +241,8 @@ class VipHandler
 
 	end
 
+	# store characters as they come inside an element. This may be called
+	# more than once within an element. 
 	def on_characters(chars)
 		if (@store_chars) then
 			buffer = @stack.pop
@@ -244,6 +252,9 @@ class VipHandler
 		end
 	end
 
+	# once all elements have been parsed, looks through unresolved_ids for objects that
+	# had not been stored yet. Also timestamps end of source import and appends state to 
+	# street_address field 
 	def on_end_document()
 		#resolve IDs.  Might add internal_file_id to unresolved_ids record as a check
 		unresolved_ids = @source.unresolved_ids
@@ -253,7 +264,7 @@ class VipHandler
 
 		unresolved_ids.each do |u|
 			obj = u.object_class.constantize.find_by_id(u.object_id)	
-			if (addXmlAttribute(obj,u.parameter,u.val)) then	
+			if (add_xml_attribute(obj,u.parameter,u.val)) then	
 				puts "Resolved" if Debug > 3
 				obj.save
 				u.destroy
@@ -262,11 +273,30 @@ class VipHandler
 
 		puts @unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
 
-		# add state_id to streets.  these eases later lookup
-		addresses = @source.street_addresses
-		addresses.each do |addr|
-			addr.state = addr.street_segments.first.precinct.locality.state
-			addr.save
+		# add state_id to streets.  this eases later lookup
+		# We use a shortcut when we can, rails convention if we're not sure
+		puts "adding state to street addresses"
+		if ['PostgreSQL','MySQL'].includes?(@source.connection.adapter_name) then
+			['ss.start_street_address_id','ss.end_street_address_id'].each do |addr_id_col|
+				@source.connection.execute("UPDATE street_addresses sa
+       		                                     SET    sa.state_id = (
+				                       SELECT l.state_id
+						 	 FROM street_segments ss, 
+       		                                              precincts p, 
+       		                                              localities l 
+				                        WHERE sa.id = #{addr_id_col}
+				                          AND ss.precinct_id = p.id
+				                          AND p.locality_id = l.id LIMIT 1)
+				                     WHERE sa.state_id IS NULL
+			                               AND sa.source_id = #{@source.id}")
+			end
+		else		
+
+			addresses = @source.street_addresses
+			addresses.each do |addr|
+				addr.state = addr.street_segments.first.precinct.locality.state
+				addr.save
+			end
 		end
 
 		@source.import_completed_at = Time.now
@@ -274,63 +304,40 @@ class VipHandler
 		@source.activate!
 		@source.save
 
-		# MySQL specific one-liner
-#		@source.connection.execute("UPDATE street_addresses sa, 
-#                                                   street_segments ss, 
-#                                                   precincts p, 
-#                                                   localities l 
-#                                            SET    sa.state_id = l.state_id
-#		                            WHERE  sa.id IN (ss.start_street_address_id, ss.end_street_address_id)
-#		                              AND  ss.precinct_id = p.id
-#		                              AND  p.locality_id = l.id
-#		                              AND  sa.source_id = #{@source.id}")
-
 	end
 
+
+	# if an attribute of a top-level element, sends attribute and characters to 
+	# add_xml_attribute.  If the end of a top-level element, saves the object
 	def on_end_element_ns(element, prefix, uri)
 
 		if (@store_chars) then
 			chars   = @stack.pop
 			element = @stack.pop
 			obj     = @stack.last
-			addXmlAttribute(obj,element,chars)
+			add_xml_attribute(obj,element,chars)
 			@store_chars = false;
 		else
 			puts "End "+element+" \n " + @stack.size.to_s if Debug>2
-#			if ["source", "precinct"].include?(element.downcase) then
 			if @stack.size == 1 then
 				obj = @stack.pop
-#				if element == 'street_address' then
-#					obj.connection.execute ("INSERT INTO street_addresses SET 
-#                                                    source_id = #{obj.source.id},
-#					            file_internal_id = #{obj.file_internal_id},
-#					            house_number = #{obj.house_number}, 
-#					            street_direction = #{obj.street_direction} ,
-#					            street_name = #{obj.street_name}, 
-#					            street_suffix = #{obj.street_suffix}, 
-#					            address_direction = #{obj.address_direction}, 
-#					            apartment = #{obj.apartment}, 
-#					            city = #{obj.city}, 
-#					            zip = #{obj.zip}")
-#				else
-					if (obj.save(false)) then
-						if element == 'source' then
-							@source_id = obj.id
+				if (obj.save(false)) then
+					if element == 'source' then
+						@source_id = obj.id
+					end
+#					puts "Saving #{element} with #{@unresolved_ids.size} unresolved ids"
+					UnresolvedId.transaction do
+						@unresolved_ids.each do |u|
+							u.object_id = obj.id
+							u.save(false)
 						end
-#						puts "Saving #{element} with #{@unresolved_ids.size} unresolved ids"
-						UnresolvedId.transaction do
-							@unresolved_ids.each do |u|
-								u.object_id = obj.id
-								u.save(false)
-							end
-			   				@unresolved_ids = []
-						end #transaction
-						puts "file_internal_id: " + obj.file_internal_id.to_s if Debug > 3
-						puts "saved" if Debug > 4
-					else
-						puts element + ' not saved.  Id: '+obj.file_internal_id.to_s if Debug > 3
-					end #if obj.save
-#				end #element == street_address
+		   				@unresolved_ids = []
+					end #transaction
+					puts "file_internal_id: " + obj.file_internal_id.to_s if Debug > 3
+					puts "saved" if Debug > 4
+				else
+					puts element + ' not saved.  Id: '+obj.file_internal_id.to_s if Debug > 3
+				end #if obj.save
 			end #stack.size == 1
 		end #store_chars
 	end

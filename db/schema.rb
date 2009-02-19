@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090213184956) do
+ActiveRecord::Schema.define(:version => 20090219201806) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -371,7 +371,9 @@ ActiveRecord::Schema.define(:version => 20090213184956) do
     t.integer "precinct_split_id",       :limit => 8
   end
 
+  add_index "street_segments", ["end_street_address_id"], :name => "index_street_segments_on_end_street_address_id"
   add_index "street_segments", ["source_id", "file_internal_id"], :name => "index_street_segments_on_source_id_and_file_internal_id"
+  add_index "street_segments", ["start_street_address_id"], :name => "index_street_segments_on_start_street_address_id"
 
   create_table "tabulation_areas", :force => true do |t|
     t.integer "source_id",                                       :null => false

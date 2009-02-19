@@ -1,8 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
 
-  map.resources :precinct_splits
 
-  map.resources :sources
 
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -34,8 +32,12 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
 
+  map.resources :source
+  map.voting_info_proj
+
   # Install the default routes as the lowest priority.
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-  map.voting_info_proj
+  map.root :controller => 'precinct', :action => 'lookup'
+
 end

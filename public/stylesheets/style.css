@@ -35,3 +35,8 @@ div#lookup_form {
   float:left;
 /*  position:relative;*/
 }
+
+body {
+  font-family: 'arial', 'helvetica';
+  background-color: #a6c743;
+}
