@@ -4,4 +4,5 @@ class Ballot < ActiveRecord::Base
 	has_many :candidates, :through => :candidate_ballots, :order => 'candidate_ballots.order'
 	belongs_to :referendum
 	belongs_to :custom_ballot
+	has_many :custom_notes, :as => :object
 end

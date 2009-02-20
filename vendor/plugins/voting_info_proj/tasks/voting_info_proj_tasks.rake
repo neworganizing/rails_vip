@@ -65,4 +65,27 @@ namespace :vip do
 		s.import(url,file)
 	end
 
+	task :source_deactivate => :environment do
+		if (!ENV['VIP_SID'])
+			puts "USAGE:\n     rake vip:source_deactivate VIP_SID=<source_id>"
+		end
+		@source = Source.find(ENV['VIP_SID'])
+		@source.deactivate!
+		@source.save
+	end #task	
+	task :source_activate => :environment do
+		if (!ENV['VIP_SID'])
+			puts "USAGE:\n     rake vip:source_activate VIP_SID=<source_id>"
+		end
+		@source = Source.find(ENV['VIP_SID'])
+		@source.activate!
+		@source.save
+	end #task	
+	task :active_sources => :environment do
+		@sources = Source.find(:all, :conditions => "active = 1")
+		puts "ID\timport date\tname"
+		@sources.each do |s|
+			puts "#{s.id}\t#{s.created_at}\t#{s.name}"
+		end
+	end #task	
 end

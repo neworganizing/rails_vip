@@ -4,4 +4,5 @@ class Contest < ActiveRecord::Base
 	belongs_to :tabulation_area
 	belongs_to :ballot
 	belongs_to :election
+	has_many :custom_notes, :as => :object
 end

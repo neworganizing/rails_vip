@@ -148,7 +148,7 @@ class <%= migration_name %> < ActiveRecord::Migration
     t.integer "source_id",                      :null => false
     t.integer "file_internal_id", :limit => 8,  :null => false
     t.integer "object_id",        :limit => 8,  :null => false
-    t.string  "class",            :limit => 25
+    t.string  "object_type",      :limit => 25
     t.text    "text",                           :null => false
     t.date    "start_date"
     t.date    "end_date"
@@ -380,10 +380,13 @@ class <%= migration_name %> < ActiveRecord::Migration
 
   create_table "unresolved_ids" do |t|
     t.integer "source_id",    :null => false
-    t.string  "object_class", :null => false
-    t.integer "object_id",    :null => false
+    t.string  "object_class", 
+    t.integer "object_id",    
     t.string  "parameter",    :null => false
-    t.integer "val"
+    t.integer "val", :limit => 8
+    t.integer  "external_source_vip_id"
+    t.datetime "external_source_datetime"
+    t.integer  "external_source_object_id", :limit => 8
   end
 
   add_index "unresolved_ids", ["source_id"], :name => "index_unresolved_ids_on_source_id"

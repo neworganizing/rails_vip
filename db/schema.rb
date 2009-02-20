@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090219201806) do
+ActiveRecord::Schema.define(:version => 20090220203547) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -155,11 +155,11 @@ ActiveRecord::Schema.define(:version => 20090219201806) do
   add_index "custom_ballots", ["source_id", "file_internal_id"], :name => "index_custom_ballots_on_source_id_and_file_internal_id"
 
   create_table "custom_notes", :force => true do |t|
-    t.integer "source_id",                      :null => false
-    t.integer "file_internal_id", :limit => 8,  :null => false
-    t.integer "object_id",        :limit => 8,  :null => false
-    t.string  "class",            :limit => 25
-    t.text    "text",                           :null => false
+    t.integer "source_id",                     :null => false
+    t.integer "file_internal_id", :limit => 8, :null => false
+    t.integer "object_id",        :limit => 8
+    t.integer "object_type",      :limit => 8
+    t.text    "text",                          :null => false
     t.date    "start_date"
     t.date    "end_date"
   end
@@ -389,11 +389,14 @@ ActiveRecord::Schema.define(:version => 20090219201806) do
   add_index "tabulation_areas", ["source_id", "file_internal_id"], :name => "index_tabulation_areas_on_source_id_and_file_internal_id"
 
   create_table "unresolved_ids", :force => true do |t|
-    t.integer "source_id",    :null => false
-    t.string  "object_class", :null => false
-    t.integer "object_id",    :null => false
-    t.string  "parameter",    :null => false
-    t.integer "val"
+    t.integer  "source_id",                              :null => false
+    t.string   "object_class",                           :null => false
+    t.integer  "object_id",                              :null => false
+    t.string   "parameter",                              :null => false
+    t.integer  "val",                       :limit => 8
+    t.integer  "external_source_vip_id"
+    t.datetime "external_source_datetime"
+    t.integer  "external_source_object_id", :limit => 8
   end
 
   add_index "unresolved_ids", ["source_id"], :name => "index_unresolved_ids_on_source_id"

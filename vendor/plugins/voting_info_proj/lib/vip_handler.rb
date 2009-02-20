@@ -7,7 +7,7 @@ class VipHandler
 
 	include LibXML::XML::SaxParser::Callbacks
 
-	Debug = ENV['VIP_DEBUG'] || 0   #debug level
+	Debug = ENV['VIP_DEBUG'].to_i || 0   #debug level
 
 	
 	# defines which top-level elements to parse
@@ -16,7 +16,7 @@ class VipHandler
 	               "precinct_split", "election_administration",       #
 	               "election_official", "ballot_drop_location",       #
 	               "contest","candidate","campaign_issue",   #
-	               "campaign_statement","custom_ballot",     #
+	               "candidate_statement","custom_ballot",     #
 	               "custom_note","referendum",               #
 	               "polling_location","street_segment",
 	               "street_address", "ballot","ballot_response",
@@ -31,7 +31,7 @@ class VipHandler
 	# the case of id's. 
 	# * Maps element's ID to file_internal_id
 	# * Overwrites IDs referenced by elements to database internal IDs
-	def add_xml_attribute(obj, attrib, val)
+	def add_xml_attribute(obj, attrib, val, external_vip_id = nil, external_datetime = nil)
 		if (attrib.eql?("id"))
 			puts attrib if Debug > 4
 			innerattrib = "file_internal_id"
@@ -39,8 +39,47 @@ class VipHandler
 			innerattrib = attrib
 		end
 
+		# if it's an object_id, it's probably a custom_note
+		# don't try to resolve it until the end of the document
+		if innerattrib.eql?("object_id") then
+			puts "object_id" if Debug > 4
+			(Topelements-["source"]).each do |top|
+				puts "trying "+top+" class" if Debug > 4
+				lookup_class = top.camelize.constantize
+				referenced_obj = lookup_class.find(:first, 
+				                                   :conditions => ["source_id = ? AND file_internal_id = ?", 
+				                                                   @source.id, val])
+				puts "got it" if Debug > 4 and !referenced_obj.nil?
+				if !referenced_obj.nil?
+					puts "Found: "+lookup_class.name+"\t"+referenced_obj.id.to_s if Debug > 4
+					obj.object_type = lookup_class.name
+					obj.object_id   = referenced_obj.id	
+					return true
+				end
+			end
+#			obj_type = (Topelements-["source"]).find{|top| top.camelize.constantize.find(:first, 
+#				                                   :conditions => ["source_id = ? AND file_internal_id = ?", 
+#				                                                   @source.id, val]).nil?}
+					
+
+			#TODO: make DRY.  reuse code from below
+			# we haven't found the referenced ID in the stack yet.
+			# Add it to a table storing unresolved objects
+			badone = UnresolvedId.new do |u|
+				u.source       = @source
+				u.object_class = obj.class.name
+				u.parameter    = attrib
+				u.val          = val
+			end
+			# save it to a stack.  We'll store it when the object gets an ID
+			@unresolved_ids.push(badone)
+
+			# save file_internal_id in place of object id, unless it's HABTM
+			obj.[]=(innerattrib,val) if obj.has_attribute?(innerattrib)
+
+			return false
 		# store object if it exists
-		if obj.respond_to?(innerattrib) or 
+		elsif obj.respond_to?(innerattrib) or 
 		   obj.respond_to?(innerattrib[0,innerattrib.size-3].pluralize) then
 
 			if (innerattrib[-3,3] == '_id' && !IdExceptions.include?(innerattrib))
@@ -51,20 +90,25 @@ class VipHandler
 				attribute_type = innerattrib[0,innerattrib.size-3]
 				puts attribute_type if Debug > 3
 
-				#drop start_ or end_ from attribute type of street address id's
-#				if (attribute_type.length >= 14 && attribute_type[-14,14] == 'street_address') then
-#					attribute_type = 'street_address'
-#				end
-#				referenced_obj = attribute_type.camelcase.constantize.find(:first, 
-#				                    :conditions => "source_id = #{@source_id} AND file_internal_id = #{val}")
-			
+				#get the class corresponding to the parameter	
 				attr_reflection =   obj.class.reflect_on_association(attribute_type.to_sym)	
 				attr_reflection ||= obj.class.reflect_on_association(attribute_type.pluralize.to_sym)	
 
 				attribute_class = attr_reflection.klass 
-				referenced_obj = @source_id.nil? ? nil : attribute_class.find(:first, 
+
+				# look up the external source if it's referenced
+				if (external_vip_id and external_datetime) then
+					obj_source = Source.find(:first, :conditions => 
+								 ["date = ? AND vip_id = ?", 
+				                                  external_datetime,
+				                                  external_vip_id])
+				end
+				obj_source ||= @source
+
+				#find the referenced object
+				referenced_obj = obj_source.nil? ? nil : attribute_class.find(:first, 
 				                    :conditions => ["source_id = ? AND file_internal_id = ?", 
-				                                    @source_id, val ])
+				                                    obj_source.id, val ])
 
 				if referenced_obj.nil? then
 					# we haven't found the referenced ID in the stack yet.
@@ -153,7 +197,6 @@ class VipHandler
 
 		#source object used throughout
 		@source      = nil
-		@source_id   = nil
 
 		#array to store id's not resolved from file_internal_id to database id's
 		@unresolved_ids = []
@@ -260,7 +303,7 @@ class VipHandler
 		unresolved_ids = @source.unresolved_ids
 #		puts unresolved_ids.size if Debug > 1
 
-		puts @unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
+		puts unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
 
 		unresolved_ids.each do |u|
 			obj = u.object_class.constantize.find_by_id(u.object_id)	
@@ -268,15 +311,16 @@ class VipHandler
 				puts "Resolved" if Debug > 3
 				obj.save
 				u.destroy
+			elsif Debug > 3
+				puts "Not Resolved: "+obj.class.name+"\t"+u.object_id.to_s+"\t"+u.parameter.to_s+"\t"+u.val.to_s
 			end
 		end
 
-		puts @unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
+		puts unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
 
 		# add state_id to streets.  this eases later lookup
 		# We use a shortcut when we can, rails convention if we're not sure
-		puts "adding state to street addresses"
-		if ['PostgreSQL','MySQL'].includes?(@source.connection.adapter_name) then
+		if ['PostgreSQL','MySQL'].include?(@source.connection.adapter_name) then
 			['ss.start_street_address_id','ss.end_street_address_id'].each do |addr_id_col|
 				@source.connection.execute("UPDATE street_addresses sa
        		                                     SET    sa.state_id = (
@@ -322,9 +366,6 @@ class VipHandler
 			if @stack.size == 1 then
 				obj = @stack.pop
 				if (obj.save(false)) then
-					if element == 'source' then
-						@source_id = obj.id
-					end
 #					puts "Saving #{element} with #{@unresolved_ids.size} unresolved ids"
 					UnresolvedId.transaction do
 						@unresolved_ids.each do |u|

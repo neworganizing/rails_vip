@@ -14,6 +14,7 @@ class Source < ActiveRecord::Base
 	has_many :street_segments
 	has_many :tabulation_areas
 	has_many :unresolved_ids
+	has_many :custom_notes, :as => :object
 
 	has_one :feed_contact, :class_name => 'ElectionOfficial'
 

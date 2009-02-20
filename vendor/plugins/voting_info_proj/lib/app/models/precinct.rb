@@ -9,6 +9,8 @@ class Precinct < ActiveRecord::Base
 	has_many :precinct_splits
 	has_many :street_segments
 
+	has_many :custom_notes, :as => :object
+
 	#TODO: ballot_drop_locations table
 
 	validates_presence_of :source, 
@@ -35,7 +37,7 @@ class Precinct < ActiveRecord::Base
 	end
 
 	# return all ballot drop locations, or, if none present, other ballot drop locations in same locality.
-	alias_method :ballot_drop_locations, :ballot_drop_locations_builtin
+	alias_method :ballot_drop_locations_builtin, :ballot_drop_locations
 	def ballot_drop_locations
 		#bdls = BallotDropLocation.find(:all, 
 		#                                :joins => "INNER JOIN ballot_drop_locations_precincts 

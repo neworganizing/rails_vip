@@ -5,6 +5,7 @@ class StreetSegment < ActiveRecord::Base
 	belongs_to :precinct_split
 
 	belongs_to :source
+	has_many :custom_notes, :as => :object
 
 	def find_by_address(address, include_inactive = false)
 
@@ -13,7 +14,7 @@ class StreetSegment < ActiveRecord::Base
 		state        = address[:state].upcase
 		city         = address[:city].upcase
 
-		even_odd = (street_num % 2 == 0) ? 'even' : 'odd'
+		even_odd = (street_num.to_i % 2 == 0) ? 'even' : 'odd'
 	
 		if (!include_inactive)
 			active_sources = Source.find(:all, :conditions => "active = 1")

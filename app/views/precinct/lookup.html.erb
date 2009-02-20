@@ -42,6 +42,12 @@
 		ID: <%= @precinct.id %><br/>
 		</td>
 	</tr>
+<% if !@precinct.custom_notes.first.nil? then -%>
+	<tr>
+		<td><b>Precinct custom notes:</b></td>
+		<td><%= @precinct.custom_notes.first.text %></td>
+	</tr>
+<% end -%>
 <% if !@split.nil? then %>
 	<tr>
 		<td><b>Precinct Split:</b></td>

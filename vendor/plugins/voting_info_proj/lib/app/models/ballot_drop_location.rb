@@ -4,4 +4,5 @@ class BallotDropLocation < ActiveRecord::Base
 	has_many :precinct_splits
 	belongs_to :locality
 	belongs_to :state
+	has_many :custom_notes, :as => :object
 end

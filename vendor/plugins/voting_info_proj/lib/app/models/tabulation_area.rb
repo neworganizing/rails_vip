@@ -8,6 +8,7 @@ class TabulationArea < ActiveRecord::Base
 	has_and_belongs_to_many :localities
 	has_many :tabulation_areas
 	has_many :contests
+	has_many :custom_notes, :as => :object
 	alias_attribute :state, :statewide_state
 
 	def tabulation_areas
