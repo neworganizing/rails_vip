@@ -4,11 +4,15 @@
 <%= stylesheet_link_tag "style" %>
 </head>
 <body>
-<div style="width:600px; height:10px; margin-bottom:5px; font-size:4px; clear:both; background-color:#680; margin-left:auto; margin-right:auto; ">&nbsp;
+<div style="width:100px; background-color:#eee; padding:2px; border:3px solid black; clear:none; position:absolute;">
+<%= link_to "Lookup", :controller => "precinct", :action => "lookup"%>
+<%= link_to "Sources", :controller => "source" %>
 </div>
-<div style="width:600px; height:20px; margin-bottom:5px; clear:both; background-color:#8a2; margin-left:auto; margin-right:auto; ">&nbsp;
+<div style="width:600px; height:10px; margin-bottom:5px; font-size:4px; clear:none; background-color:#680; margin-left:auto; margin-right:auto; ">&nbsp;
 </div>
-<div style="width:600px; align:center; background-color:#eee; margin-top:5px; margin-left:auto; margin-right:auto; ">
+<div style="width:600px; height:20px; margin-bottom:5px; clear:none; background-color:#8a2; margin-left:auto; margin-right:auto; ">&nbsp;
+</div>
+<div style="width:580px; align:center; background-color:#eee; margin-top:5px; margin-left:auto; margin-right:auto; padding:10px;">
 <%= yield %>
 </div>
 <div style="margin-top:100px; width:600px; margin-left:auto; margin-right:auto;">
