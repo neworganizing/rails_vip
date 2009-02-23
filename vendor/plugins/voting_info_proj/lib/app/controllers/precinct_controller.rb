@@ -60,12 +60,8 @@ class PrecinctController < ApplicationController
 
 	def show
 		@precinct = Precinct.find(params[:id])
-		@polling_location = @precinct.polling_location
-		if @polling_location.nil? then
-			render :action => "show"
-		else
-			render :action => "show_poll"
-		end
+		@polling_locations = @precinct.polling_locations
+		render :action => "show"
 	end
 
 	def lookup
@@ -245,6 +241,22 @@ class PrecinctController < ApplicationController
 				true
 				
 			end #nil precinct
+		end
+	end
+
+	def index
+		
+		if (params["source"])
+			@source = Source.find(params["source"])
+			@precincts = @source.precincts
+		elsif (params["locality"])
+			@locality = Locality.find(params["locality"])
+			@precincts = @locality.precincts
+		elsif (params["ballot_drop_location"])
+			@ballot_drop_location = BallotDropLocation.find(params["ballot_drop_location"])
+			@precincts = @ballot_drop_location.precincts
+		else
+			@precincts = Precinct.find(:all)
 		end
 	end
 end

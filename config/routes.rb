@@ -33,6 +33,13 @@ ActionController::Routing::Routes.draw do |map|
   # See how all your routes lay out with "rake routes"
 
   map.resources :source
+  map.resources :state
+  map.resources :locality
+  map.resources :precinct
+  map.resources :ballot_drop_location
+  map.resources :polling_location
+  map.resources :precinct_split
+  map.resources :election_official
   map.voting_info_proj
 
   # Install the default routes as the lowest priority.

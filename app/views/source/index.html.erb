@@ -1,7 +1,13 @@
 
 <table>
-<th><td>id</td><td>name</td></th>
+<tr><th>id</th><th>name</th></tr>
 <% @sources.each do |s| %>
-<tr><td><%=h s.id %></td><td><%=h s.name %></td></tr>
+<tr>
+  <td><%= link_to s.id , s %></td>
+  <td><%=h s.name %></td>
+  <td><%=h s.active? ? "Active" : "Inactive" %></td>
+  <td><%= link_to "Precincts", :controller => "precinct", :source => s.id %></td>
+  <td><%= link_to "Localities", :controller => "locality", :source => s.id %></td>
+</tr>
 <% end %>
 </table>

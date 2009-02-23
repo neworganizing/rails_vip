@@ -1,1 +1,24 @@
+<%= link_to @precinct.source.name, @precinct.source %> &gt;&gt;
+<%= link_to @precinct.locality.state.name, @precinct.locality.state %> &gt;&gt;
+<%= link_to @precinct.locality.name, @precinct.locality %> &gt;&gt;
 <%=h @precinct.name %>
+
+<table>
+<tr><td>name</td><td><%=h @precinct.name %></td></tr>
+<tr><td>locality</td><td><%= link_to @precinct.locality.name, @precinct.locality %></td></tr>
+<tr><td>ward</td><td><%=h @precinct.ward %></td></tr>
+<tr><td>mail only?</td><td><%=h @precinct.mail_only %></td></tr>
+<% @precinct.polling_locations.each do |pl| %>
+<tr><td>polling location</td><td><%= link_to pl.name, pl%></td></tr>
+<% end %>
+<% @precinct.ballot_drop_locations.each do |bdl| %>
+<tr><td>ballot drop location</td><td><%= link_to bdl.name, bdl%></td></tr>
+<% end %>
+<% @precinct.precinct_splits.each do |ps| %>
+<tr><td>split</td><td><%=h ps.name%></td></tr>
+<% end %>
+<% if @precinct.street_segments.size > 0 %>
+<tr><td><%= link_to "Street Segments", :controller => "street_segment", :precinct => @precinct.id %></td><td><td></tr>
+<% end %>
+</table>
+

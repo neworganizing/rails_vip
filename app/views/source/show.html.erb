@@ -1,8 +1,26 @@
+<a href="/source">Sources</a>
 <table>
-<% @source.attributes.each do |k,v| %>
+<tr><td><b>source name</b></td><td><%= @source.name %></td></tr>
+<tr><td><b>datetime</b></td><td><%= @source.datetime %></td></tr>
+<tr><td><b>URL</b></td><td><a href="<%= @source.organization_url %>"><%= @source.organization_url %></a></td></tr>
+<tr><td><b>feed contact</b></td><td><%= @source.feed_contact.nil? ? '(none)' : link_to (@source.feed_contact.name, @source.feed_contact)%></td></tr>
+<tr><td><b>description</b></td><td><%= @source.description %></td></tr>
+<tr><td><b>imported at</b></td><td><%=h @source.import_completed_at %></td></tr>
+
 <tr>
-<td><b><%=h k%></b></td>
-<td><%=h v%></td>
-</tr>
+<% if @source.organization_url %>
+<td><a href="<%= @source.organization_url %>">Distributor Homepage</a></td>
+<% else %>
+<td></td>
 <% end %>
+<% if @source.tou_url %>
+<td><a href="<%= @source.tou_url %>">Terms of Use</a></td>
+<% else %>
+<td></td>
+<% end %>
+</tr>
+
+<tr><td><%= link_to "Precincts", :controller => "precinct", :source => @source.id %></td>
+  <td><%= link_to "Localities", :controller => "locality", :source => @source.id %></td>
+</tr>
 </table>

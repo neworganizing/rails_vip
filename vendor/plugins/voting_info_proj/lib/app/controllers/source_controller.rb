@@ -1,4 +1,5 @@
 class SourceController < ApplicationController
+	layout 'layouts/main'
 	def show 
 		@source = Source.find(params[:id])
 	end

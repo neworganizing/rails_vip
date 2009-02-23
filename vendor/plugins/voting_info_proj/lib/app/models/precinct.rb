@@ -11,8 +11,6 @@ class Precinct < ActiveRecord::Base
 
 	has_many :custom_notes, :as => :object
 
-	#TODO: ballot_drop_locations table
-
 	validates_presence_of :source, 
 		:file_internal_id,
 		:locality_id
@@ -39,10 +37,6 @@ class Precinct < ActiveRecord::Base
 	# return all ballot drop locations, or, if none present, other ballot drop locations in same locality.
 	alias_method :ballot_drop_locations_builtin, :ballot_drop_locations
 	def ballot_drop_locations
-		#bdls = BallotDropLocation.find(:all, 
-		#                                :joins => "INNER JOIN ballot_drop_locations_precincts 
-		#                                            ON ballot_drop_locations_precincts.ballot_drop_location_id = ballot_drop_locations.id",
-		#                                :conditions => ["ballot_drop_locations_precincts.precinct_id = ?",self.id])
 		bdls = ballot_drop_locations_builtin
 		if (bdls.size == 0)
 			bdls = BallotDropLocation.find(:all, :conditions => {:source_id => self.source_id, :locality_id => self.locality_id})
