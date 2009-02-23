@@ -1,5 +1,7 @@
 class State < ActiveRecord::Base
 	belongs_to :source
-	has_one :election_administration
+	belongs_to :election_administration
 	has_many :custom_notes, :as => :object
+	has_many :localities
+	has_many :street_addresses
 end
