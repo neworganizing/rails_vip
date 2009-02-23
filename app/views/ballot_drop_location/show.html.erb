@@ -1,0 +1,10 @@
+<%= link_to @ballot_drop_location.source.name, @ballot_drop_location.source %> &gt;&gt; <%= @ballot_drop_location.state.name %> &gt;&gt; <%= @ballot_drop_location.locality.name %> &gt;&gt; <%= @ballot_drop_location.name %><br/>
+<br/>
+<table>
+<tr><td><b>name</b></td><td><%= @ballot_drop_location.name %></td></tr>
+<tr><td><b>dates/times</b></td><td><%= @ballot_drop_location.dates_times_open %></td></tr>
+<tr><td><b>directions</b></td><td><%= @ballot_drop_location.directions %></td></tr>
+<tr><td><b>address</b></td><td><%= @ballot_drop_location.address%></td></tr>
+<tr><td><b>voter services</b></td><td><%= @ballot_drop_location.voter_services%></td></tr>
+</table>
+<%= link_to "Precincts", :controller => "precinct", :ballot_drop_location => @ballot_drop_location.id %>

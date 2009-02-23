@@ -1,0 +1,9 @@
+<%= link_to @locality.source.name, @locality.source %> &gt;&gt; <%= link_to @locality.state.name, @locality.state %> &gt;&gt; <%= @locality.name %><br/>
+<br/>
+<table>
+<tr><td><b>name</b></td><td><%=h @locality.name %></td></tr>
+<tr><td><b>type</b></td><td><%=h @locality.type %></td></tr>
+<tr><td><b>election administration</b></td><td><%= @locality.election_administration.nil? ? '(none)' : link_to (@locality.election_administration.name, @locality.election_administration) %></td></tr>
+</table>
+<%= link_to "Precincts", :controller => "precinct", :locality => @locality.id %>
+<%= link_to "Ballot Drop Locations", :controller => "ballot_drop_location", :locality => @locality.id if @locality.ballot_drop_locations.size > 0%>

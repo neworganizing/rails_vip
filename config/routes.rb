@@ -34,6 +34,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :source
   map.resources :state
+  map.resources :election_administration
   map.resources :locality
   map.resources :precinct
   map.resources :ballot_drop_location

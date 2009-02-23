@@ -1,0 +1,12 @@
+
+<table>
+<tr><th>id</th><th>name</th></tr>
+<% @localities.each do |l| %>
+<tr>
+  <td><%=h l.state.name %></td>
+  <td><%= link_to l.id , l %></td>
+  <td><%= link_to l.name, l %></td>
+  <td><%= link_to "precincts", :controller => "precinct", :locality => l.id %></td>
+</tr>
+<% end %>
+</table>

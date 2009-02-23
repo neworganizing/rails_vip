@@ -1,0 +1,20 @@
+<%= link_to @election_administration.source.name, @election_administration.source %> &gt;&gt; <%= @election_administration.name %><br/>
+<br/>
+<table>
+<tr><td><b>name</b></td><td><%=h @election_administration.name ? @election_administration.name : '' %></td></tr>
+
+<tr><td><b>Election Official</b></td><td><%= @election_administration.eo ? link_to(@election_administration.eo.name, @election_administration.eo) : '' %></td></tr>
+<tr><td><b>Overseas Voting Contact</b></td><td><%= @election_administration.ovc ? link_to(@election_administration.ovc.name, @election_administration.ovc) : '' %></td></tr>
+
+<tr><td><b>address</b></td><td><%=h @election_administration.physical_address ? @election_administration.physical_address : '' %></td></tr>
+<tr><td><b>mailing address</b></td><td><%=h @election_administration.mailing_address ? @election_administration.mailing_address : '' %></td></tr>
+<tr><td><b>URL</b></td><td><%= @election_administration.elections_url ? '<a href="'+@election_administration.elections_url+'">'+@election_administration.elections_url+'</a>' : '' %></td></tr>
+<tr><td><b>Registration URL</b></td><td><%= @election_administration.registration_url ? '<a href="'+@election_administration.registration_url+'">'+@election_administration.registration_url+'</a>' : '' %></td></tr>
+<tr><td><b>Am I Registered URL</b></td><td><%= @election_administration.am_i_registered_url ? '<a href="'+@election_administration.am_i_registered_url+'">'+@election_administration.am_i_registered_url+'</a>' : '' %></td></tr>
+<tr><td><b>Absentee URL</b></td><td><%= @election_administration.absentee_url ? '<a href="'+@election_administration.absentee_url+'">'+@election_administration.absentee_url+'</a>' : '' %></td></tr>
+<tr><td><b>Where Do I Vote URL</b></td><td><%= @election_administration.where_do_i_vote_url ? '<a href="'+@election_administration.where_do_i_vote_url + '">'+@election_administration.where_do_i_vote_url + '</a>' : '' %></td></tr>
+<tr><td><b>Rules URL</b></td><td><%= @election_administration.rules_url ? '<a href="'+@election_administration.rules_url+'">'+@election_administration.rules_url+'</a>' : '' %></td></tr>
+
+<tr><td><b>voter services</b></td><td><%=h @election_administration.voter_services ? @election_administration.voter_services : '' %></td></tr>
+<tr><td><b>hours</b></td><td><%=h @election_administration.hours ? @election_administration.hours : '' %></td></tr>
+</table>

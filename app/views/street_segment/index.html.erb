@@ -1,0 +1,32 @@
+<% if @locality %>
+<%= link_to (@locality.source.name, @locality.source) %> &gt;&gt; 
+<%= @locality.state.name %> &gt;&gt; 
+<%= link_to (@locality.name, @locality) %> &gt;&gt; Street Segments
+<% elsif @source %>
+<%= link_to (@source.name, @source) %>
+<% end %>
+<table>
+<tr><th>id</th><th>odd/<br/>even</th><th>start</th><th>end</th><th>precinct</th><th>split</th></tr>
+<% @street_segments.each do |ss| -%>
+<tr>
+<td><%=h ss.id %></td>
+<td><%=h ss.odd_even_both %></td>
+<td><%=  ss.start_street_address.house_number + " " + \
+         ss.start_street_address.street_direction + " " + \
+         ss.start_street_address.street_name + " " + \
+         ss.start_street_address.street_suffix + " " + \
+         ss.start_street_address.address_direction + ", " + \
+         ss.start_street_address.city 
+ %></td>
+<td><%=  ss.end_street_address.house_number + " " + \
+         ss.end_street_address.street_direction + " " + \
+         ss.end_street_address.street_name + " " + \
+         ss.end_street_address.street_suffix + " " + \
+         ss.end_street_address.address_direction + ", " + \
+         ss.end_street_address.city 
+ %></td>
+<td><%= ss.precinct ? link_to (ss.precinct.name, ss.precinct) : '' %></td>
+<td><%= ss.precinct_split ? link_to (ss.precinct_split.name, ss.precinct_split) : '' %></td>
+</tr>
+<% end -%>
+</table>

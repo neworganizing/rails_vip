@@ -1,0 +1,20 @@
+<%= link_to @polling_location.source.name, @polling_location.source %> &gt;&gt;
+<%= link_to @polling_location.precincts.first.locality.state.name, @polling_location.precincts.first.locality.state %> &gt;&gt;
+<%= link_to @polling_location.precincts.first.locality.name, @polling_location.precincts.first.locality %> &gt;&gt;
+<%=h @polling_location.name %>
+
+<table>
+<tr><td>name</td><td><%=h @polling_location.name %></td></tr>
+<tr><td>address</td><td><%=h @polling_location.address ? @polling_location.address : '' %></td></tr>
+<tr><td>directions</td><td><%=h @polling_location.directions ? @polling_location.directions : '' %></td></tr>
+<tr><td>hours</td><td><%=h @polling_location.polling_hours ? @polling_location.polling_hours : '' %></td></tr>
+</table>
+
+<%=  GMap.header %>
+<%=  @map.to_html %>
+<%= @map.div(:width => 493, :height => 300) %>
+<div id="map-div">
+</div>
+<div style="clear:both;">
+<%= @polling_loc_std.address %><br/>
+</div>
