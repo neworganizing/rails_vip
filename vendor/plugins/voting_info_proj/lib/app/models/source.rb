@@ -7,8 +7,10 @@ class Source < ActiveRecord::Base
 	has_many :custom_notes
 	has_many :election_administrations
 	has_many :election_officials
+	has_many :elections
 	has_many :localities
 	has_many :precincts
+	has_many :contests
 	has_many :states
 	has_many :street_addresses
 	has_many :street_segments

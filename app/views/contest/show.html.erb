@@ -1,0 +1,37 @@
+<%= link_to @contest.source.name, @contest.source %> &gt;&gt; <%= link_to @contest.election.date.to_s + " Election", @contest.election %> &gt;&gt; <%= @contest.tabulation_area.name %>
+<br/>
+<br/>
+
+<%= @contest.election.date.to_s %>
+<%= @contest.type %>
+<% if @referendum %>
+Referendum: <%= @referendum.title %>
+<table>
+<tr><td><b>subtitle</b></td><td><%=h @referendum.subtitle ? @referendum.subtitle: '' %></td></tr>
+<tr><td><b>brief</b></td><td><%=h @referendum.brief ? @referendum.brief : '' %></td></tr>
+<tr><td><b>text</b></td><td><%=h @referendum.text %></td></tr>
+<tr><td><b>pro statement</b></td><td><%=h @referendum.pro_statement ? @referendum.pro_statement : '' %></td></tr>
+<tr><td><b>con statement</b></td><td><%=h @referendum.con_statement ? @referendum.con_statement : '' %></td></tr>
+<tr><td><b>passage threshold</b></td><td><%=h @referendum.passage_threshold ? @referendum.passage_threshold : '' %></td></tr>
+<tr><td><b>effect of abstain</b></td><td><%=h @referendum.effect_of_abstain ? @referendum.effect_of_abstain : '' %></td></tr>
+<tr><td><b>responses</b></td><td><%=h @responses.join(', ') %></td></tr>
+</table>
+<% end %>
+
+
+<% if @candidates %>
+<br/>
+<%= @contest.office ? @contest.office : ''%>
+<table>
+<% @candidates.each do |c| %>
+	<tr>
+	   <td><% if c.photo_url %>
+		<%= link_to('<img src="'+c.photo_url+'">', c) %>
+	       <% end %>
+ 	   </td>
+           <td><%= link_to c.name, c %></td>
+	   <td><%= c.party ? c.party : ''%></td>
+	</tr>
+<% end %>
+</table>
+<% end %>

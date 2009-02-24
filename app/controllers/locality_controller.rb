@@ -3,7 +3,6 @@ class LocalityController < ApplicationController
 
 	def show
 		@locality = Locality.find(params[:id])
-		render :action => "show"
 	end
 
 	def index

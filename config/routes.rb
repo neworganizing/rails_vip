@@ -32,12 +32,17 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
 
-  map.voting_info_proj
+#  map.voting_info_proj
+  map.connect 'precinct/lookup', :controller => 'precinct', :action => 'lookup'
+  map.resources :locality
   map.resources :source
   map.resources :state
   map.resources :election_administration
-  map.resources :locality
+  map.resources :contest
+  map.resources :candidate
+  map.resources :tabulation_area
   map.resources :precinct
+  map.resources :election
   map.resources :ballot_drop_location
   map.resources :polling_location
   map.resources :precinct_split

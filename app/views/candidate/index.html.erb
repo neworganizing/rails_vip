@@ -1,0 +1,21 @@
+<% if @source %>
+<%= link_to @source.name, @source %>
+<% end %>
+Contests
+<table>
+<tr><th>id</th><th>election</th><th>tabulation_area</th><th>type</th><th>office</th><th></th></tr>
+<% @contests.each do |c| %>
+<tr>
+  <td><%= c.id %></td>
+  <td><%= link_to c.election.date, c.election %></td>
+  <td><%= link_to c.tabulation_area.name, c.tabulation_area %></td>
+  <td><%= c.type %></td>
+  <td><% if c.office %>
+		<%= c.office %>
+      <% elsif c.ballot.referendum %>
+		<%= c.ballot.referendum.title %>
+      <% end %></td>
+  <td><%= link_to "details", c %></td>
+</tr>
+<% end %>
+</table>

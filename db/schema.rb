@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090220203547) do
+ActiveRecord::Schema.define(:version => 20090224165432) do
 
   create_table "ballot_drop_locations", :force => true do |t|
     t.integer "source_id",                     :null => false
@@ -239,6 +239,9 @@ ActiveRecord::Schema.define(:version => 20090220203547) do
     t.string  "address",                       :null => false
     t.string  "directions"
     t.string  "polling_hours"
+    t.float   "lat"
+    t.float   "lon"
+    t.integer "coord_accuracy"
   end
 
   add_index "polling_locations", ["source_id", "file_internal_id"], :name => "index_polling_locations_on_source_id_and_file_internal_id"
@@ -356,6 +359,9 @@ ActiveRecord::Schema.define(:version => 20090220203547) do
     t.integer "std_house_number"
     t.string  "std_house_number_suff"
     t.string  "std_street_name"
+    t.float   "lat"
+    t.float   "lon"
+    t.integer "coord_accuracy"
   end
 
   add_index "street_addresses", ["source_id", "file_internal_id"], :name => "index_street_addresses_on_source_id_and_file_internal_id"
@@ -390,7 +396,7 @@ ActiveRecord::Schema.define(:version => 20090220203547) do
 
   create_table "unresolved_ids", :force => true do |t|
     t.integer  "source_id",                              :null => false
-    t.string   "object_class",                           :null => false
+    t.string   "object_class"
     t.integer  "object_id",                              :null => false
     t.string   "parameter",                              :null => false
     t.integer  "val",                       :limit => 8

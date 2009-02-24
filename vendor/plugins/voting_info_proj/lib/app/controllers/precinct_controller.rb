@@ -61,7 +61,6 @@ class PrecinctController < ApplicationController
 	def show
 		@precinct = Precinct.find(params[:id])
 		@polling_locations = @precinct.polling_locations
-		render :action => "show"
 	end
 
 	def lookup
@@ -193,32 +192,35 @@ class PrecinctController < ApplicationController
 
 				#plot the street segment
 				@precinct.street_segments.each do |seg|
-					s_start = seg.start_street_address
-					s_end   = seg.end_street_address
-					seg_addr_start = (s_start.house_number.nil? ? '' : s_start.house_number) + ' ' + 
-					                 (s_start.street_direction.nil? ? '' : s_start.street_direction) + ' ' +
-					                 (s_start.street_name.nil? ? '' : s_start.street_name) + ' ' + 
-					                 (s_start.street_suffix.nil? ? '' : s_start.street_suffix) + ' ' +
-					                 (s_start.address_direction.nil? ? '' : s_start.address_direction) + ', ' + 
-					                 s_start.city + ', ' + 
-					                 data[:state] + ' ' + 
-					                 (s_start.zip.nil? ? '' : s_start.zip)
-					seg_addr_end   = (s_end.house_number.nil? ? '' : s_end.house_number) + ' ' + 
-					                 (s_end.street_direction.nil? ? '' : s_end.street_direction) + ' ' +
-					                 (s_end.street_name.nil? ? '' : s_end.street_name) + ' ' + 
-					                 (s_end.street_suffix.nil? ? '' : s_end.street_suffix) + ' ' +
-					                 (s_end.address_direction.nil? ? '' : s_end.address_direction) + ', ' + 
-					                 s_end.city + ', ' + 
-					                 data[:state] + ' ' 
-					                 (s_end.zip.nil? ? '' : s_end.zip)
-					                 
-					loc_start = gg.locate seg_addr_start
-					loc_end   = gg.locate seg_addr_end
-	
-									
-					@map.overlay_init(GPolyline.new([GLatLng.new([loc_start.latitude, loc_start.longitude]),
-					                                 GLatLng.new([loc_end.latitude,   loc_end.longitude])]))
-					                                
+					begin
+						s_start = seg.start_street_address
+						s_end   = seg.end_street_address
+						seg_addr_start = (s_start.house_number.nil? ? '' : s_start.house_number) + ' ' + 
+						                 (s_start.street_direction.nil? ? '' : s_start.street_direction) + ' ' +
+						                 (s_start.street_name.nil? ? '' : s_start.street_name) + ' ' + 
+						                 (s_start.street_suffix.nil? ? '' : s_start.street_suffix) + ' ' +
+						                 (s_start.address_direction.nil? ? '' : s_start.address_direction) + ', ' + 
+						                 s_start.city + ', ' + 
+						                 data[:state] + ' ' + 
+						                 (s_start.zip.nil? ? '' : s_start.zip)
+						seg_addr_end   = (s_end.house_number.nil? ? '' : s_end.house_number) + ' ' + 
+						                 (s_end.street_direction.nil? ? '' : s_end.street_direction) + ' ' +
+						                 (s_end.street_name.nil? ? '' : s_end.street_name) + ' ' + 
+						                 (s_end.street_suffix.nil? ? '' : s_end.street_suffix) + ' ' +
+						                 (s_end.address_direction.nil? ? '' : s_end.address_direction) + ', ' + 
+						                 s_end.city + ', ' + 
+						                 data[:state] + ' ' 
+						                 (s_end.zip.nil? ? '' : s_end.zip)
+						                 
+						loc_start = gg.locate seg_addr_start
+						loc_end   = gg.locate seg_addr_end
+		
+										
+						@map.overlay_init(GPolyline.new([GLatLng.new([loc_start.latitude, loc_start.longitude]),
+						                                 GLatLng.new([loc_end.latitude,   loc_end.longitude])]))
+					rescue
+						#couldn't find one of the addresses
+					end	
 		
 				end #segment
 
