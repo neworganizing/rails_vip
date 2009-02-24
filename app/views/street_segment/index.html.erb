@@ -4,11 +4,11 @@
 <%= link_to @precinct.locality.state.name, @precinct.locality.state %> &gt;&gt; 
 <%= link_to @precinct.name, @precinct %> &gt;&gt; Street Segments
 <% elsif @locality %>
-<%= link_to (@locality.source.name, @locality.source) %> &gt;&gt; 
+<%= link_to(@locality.source.name, @locality.source) %> &gt;&gt; 
 <%= @locality.state.name %> &gt;&gt; 
-<%= link_to (@locality.name, @locality) %> &gt;&gt; Street Segments
+<%= link_to(@locality.name, @locality) %> &gt;&gt; Street Segments
 <% elsif @source %>
-<%= link_to (@source.name, @source) %>
+<%= link_to(@source.name, @source) %>
 <% end %>
 <table>
 <tr><th>id</th><th>odd/<br/>even</th><th>start</th><th>end</th><th>precinct</th><th>split</th></tr>
@@ -32,8 +32,8 @@
 	(ss.end_street_address.std_street_name.nil? ? '' : ss.end_street_address.std_street_name + " ") + \
 	(ss.end_street_address.city.nil? ? '' : ss.end_street_address.city + " ") 
  %></td>-->
-<td><%= ss.precinct ? link_to (ss.precinct.name, ss.precinct) : '' %></td>
-<td><%= ss.precinct_split ? link_to (ss.precinct_split.name, ss.precinct_split) : '' %></td>
+<td><%= ss.precinct ? link_to(ss.precinct.name, ss.precinct) : '' %></td>
+<td><%= ss.precinct_split ? link_to(ss.precinct_split.name, ss.precinct_split) : '' %></td>
 </tr>
 <% end -%>
 </table>

@@ -10,6 +10,7 @@
 <tr><td>hours</td><td><%=h @polling_location.polling_hours ? @polling_location.polling_hours : '' %></td></tr>
 </table>
 
+<% if @map %>
 <%=  GMap.header %>
 <%=  @map.to_html %>
 <%= @map.div(:width => 493, :height => 300) %>
@@ -18,3 +19,4 @@
 <div style="clear:both;">
 <%= @polling_loc_std.address %><br/>
 </div>
+<% end %>

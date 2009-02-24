@@ -33,7 +33,7 @@ Elections:
 <%   @source.elections.each do |e| %>
 <tr>
   <td><%= link_to e.date, e %></td>
-  <td><%= link_to e.type, e %></td>
+  <td><%= link_to e.election_type, e %></td>
 </tr>
 <% end %>
 </table>

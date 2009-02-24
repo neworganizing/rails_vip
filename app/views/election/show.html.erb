@@ -2,7 +2,7 @@
 <br/>
 <table>
 <tr><td><b>date</b></td><td><%=h @election.date %></td></tr>
-<tr><td><b>type</b></td><td><%=h @election.type ? @election.type : '' %></td></tr>
+<tr><td><b>type</b></td><td><%=h @election.election_type ? @election.election_type : '' %></td></tr>
 <tr><td><b>state</b></td><td><%= link_to @election.state.name, @election.state %></td></tr>
 <tr><td><b>statewide</b></td><td><%=h @election.statewide %></td></tr>
 <tr><td><b>registration info</b></td><td><%=h @election.registration_info ? @election.registration_info : '' %></td></tr>
