@@ -1,8 +1,18 @@
-class LocalityController < ApplicationController
+class TabulationAreaController < ApplicationController
 	layout 'layouts/main'
 
 	def show
-		@locality = Locality.find(params[:id])
+		@tabulation_area = TabulationArea.find(params[:id])
+		@precincts = @tabulation_area.precincts
+		@localities = @tabulation_area.localities
+		@precinct_splits = @tabulation_area.precinct_splits
+		@children  = @tabulation_area.all_children
+		@parents   = @tabulation_area.parents
+		@contests  = @tabulation_area.contests 
+		if @parents.size > 0
+			@contests = @contests + @parents.map{|t| t.contests}
+			@contests.flatten!
+		end
 	end
 
 	def index

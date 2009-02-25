@@ -3,9 +3,19 @@
 <br/>
 
 <%= @contest.election.date.to_s %>
-<%= @contest.type %>
+<table>
+<tr><td><b>type</b></td><td><%= @contest.type %></td></tr>
+<tr><td><b>partisan</b></td><td><%= @contest.partisan %></td></tr>
+<tr><td><b>primary party</b></td><td><%= @contest.primary_party ? @contest.primary_party : '' %></td></tr>
+<tr><td><b>electorate specifications</b></td><td><%= @contest.electorate_specifications ? @contest.electorate_specifications : '' %></td></tr>
+<tr><td><b>special</b></td><td><%= @contest.special ? @contest.special : '' %></td></tr>
+<tr><td><b>office</b></td><td><%= @contest.office ? @contest.office : '' %></td></tr>
+<tr><td><b>number elected</b></td><td><%= @contest.number_elected ? @contest.number_elected.to_s : '' %></td></tr>
+<tr><td><b>number voting for</b></td><td><%= @contest.number_voting_for ? @contest.number_voting_for.to_s : '' %></td></tr>
+</table>
+</br>
 <% if @referendum %>
-Referendum: <%= @referendum.title %>
+<b>Referendum: <%= @referendum.title %></b>
 <table>
 <tr><td><b>subtitle</b></td><td><%=h @referendum.subtitle ? @referendum.subtitle: '' %></td></tr>
 <tr><td><b>brief</b></td><td><%=h @referendum.brief ? @referendum.brief : '' %></td></tr>
@@ -21,7 +31,7 @@ Referendum: <%= @referendum.title %>
 
 <% if @candidates %>
 <br/>
-<%= @contest.office ? @contest.office : ''%>
+<b>Candidates</b>
 <table>
 <% @candidates.each do |c| %>
 	<tr>
