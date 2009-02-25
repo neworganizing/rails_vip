@@ -49,7 +49,7 @@ namespace :vip do
 				#assume that the .zip file is named the same as the file it contains
 				xmlfile = fullfile[0 .. fullfile.length - 5]
 				xmlname = filename[0 .. filename.length - 5]
-				unless (xmlname[xmlname.length - 3 .. xmlname.length - 5].eql?("xml"))
+				unless (xmlname[xmlname.length - 3 .. xmlname.length - 1].eql?("xml"))
 					xmlname = xmlname + ".xml"
 				end
 				open(xmlfile, "wb") { |fyle|
@@ -65,6 +65,7 @@ namespace :vip do
 		s.import(url,file)
 	end
 
+	desc "Deactivate source"
 	task :source_deactivate => :environment do
 		if (!ENV['VIP_SID'])
 			puts "USAGE:\n     rake vip:source_deactivate VIP_SID=<source_id>"
@@ -73,6 +74,8 @@ namespace :vip do
 		@source.deactivate!
 		@source.save
 	end #task	
+
+	desc "Activate source"
 	task :source_activate => :environment do
 		if (!ENV['VIP_SID'])
 			puts "USAGE:\n     rake vip:source_activate VIP_SID=<source_id>"
@@ -81,6 +84,8 @@ namespace :vip do
 		@source.activate!
 		@source.save
 	end #task	
+
+	desc "List active sources"
 	task :active_sources => :environment do
 		@sources = Source.find(:all, :conditions => "active = 1")
 		puts "ID\timport date\tname"

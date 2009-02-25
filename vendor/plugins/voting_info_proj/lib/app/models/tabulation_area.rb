@@ -17,11 +17,11 @@ class TabulationArea < ActiveRecord::Base
 
 	# get all tabulation areas below this one
 	def all_children
-		self.children + self.children.each {|child| child.all_children}.collect
+		self.children + self.children.each {|c| c.all_children}.collect
 	end
 
 	# get all tabulation areas above this one
 	def parents
-		self.parent.nil? ? [] : self.parent + self.parent.parents
+		self.parent.nil? ? [] : [self.parent] + self.parent.parents
 	end
 end
