@@ -1,5 +1,4 @@
 class PrecinctController < ApplicationController
-	layout 'layouts/main'
 	POLL_URL = 'http://www.martintod.org.uk/blog/LDballotBox.png'
 	HOME_URL = 'http://maps.google.com/mapfiles/kml/shapes/homegardenbusiness.png'
 	STATES = [

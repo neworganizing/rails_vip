@@ -1,5 +1,4 @@
 class TabulationAreaController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@tabulation_area = TabulationArea.find(params[:id])

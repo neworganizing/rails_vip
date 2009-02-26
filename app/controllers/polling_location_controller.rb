@@ -1,5 +1,4 @@
 class PollingLocationController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		require 'rubygems'

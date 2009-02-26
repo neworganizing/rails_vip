@@ -1,5 +1,4 @@
 class StateController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@state = State.find(params[:id])

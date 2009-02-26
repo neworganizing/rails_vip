@@ -1,5 +1,4 @@
 class ElectionOfficialController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@election_official = ElectionOfficial.find(params[:id])

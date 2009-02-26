@@ -1,5 +1,4 @@
 class LocalityController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@locality = Locality.find(params[:id])

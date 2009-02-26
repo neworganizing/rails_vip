@@ -1,5 +1,4 @@
 class BallotDropLocationController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@ballot_drop_location = BallotDropLocation.find(params[:id])

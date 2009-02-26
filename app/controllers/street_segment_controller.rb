@@ -1,5 +1,4 @@
 class StreetSegmentController < ApplicationController
-	layout 'layouts/main'
 
 	def index
 		if (params["precinct"])

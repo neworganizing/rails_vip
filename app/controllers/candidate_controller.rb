@@ -1,5 +1,4 @@
 class CandidateController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@candidate = Candidate.find(params[:id])

@@ -1,5 +1,4 @@
 class ContestController < ApplicationController
-	layout 'layouts/main'
 
 	def show
 		@contest = Contest.find(params[:id])
