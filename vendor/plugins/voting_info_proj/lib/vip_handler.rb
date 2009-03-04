@@ -58,7 +58,6 @@ class VipHandler
 
 		# we haven't found the referenced ID in the stack yet.
 		# Add it to a table storing unresolved objects
-		save_unresolved(obj,object_id,store_unresolved) if store_unresolved
 		if store_unresolved
 			save_unresolved(obj,"object_id",object_id)
 		end
@@ -357,7 +356,8 @@ class VipHandler
 						resolve_ids_belongs_to_sql(@source, element_klass, param)
 					when :has_many
 						if assoc.options.keys.include?(:through)
-							insert_table = assoc.options["through"].to_s.tableize
+							insert_table = assoc.options[:through].to_s.tableize
+							puts "through: "+insert_table
 							resolve_ids_habtm_sql(@source, element_klass, param, insert_table)
 						else
 							raise "unexpected association macro type :has_many "+element_klass.name+" and "+param_name
