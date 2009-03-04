@@ -37,7 +37,7 @@ class VipHandler
 		# save it to a stack.  We'll store it when the object gets an ID
 		@unresolved_ids.push(badone)
 
-		puts 'Added '+innerattrib+' to resolution list.  Fail #'+@unresolved.to_s if Debug > 3
+		puts 'Added '+attrib+' to resolution list.  Fail #'+@unresolved.to_s if Debug > 3
 	end
 
 	def store_arbitrary_object_reference(obj,object_id, store_unresolved)
@@ -46,7 +46,7 @@ class VipHandler
 			lookup_class = top.camelize.constantize
 			referenced_obj = lookup_class.find(:first, 
 			                                   :conditions => ["source_id = ? AND file_internal_id = ?", 
-			                                                   @source.id, val])
+			                                                   @source.id, object_id])
 			puts "got it" if Debug > 4 and !referenced_obj.nil?
 			if !referenced_obj.nil?
 				puts "Found: "+lookup_class.name+"\t"+referenced_obj.id.to_s if Debug > 4
@@ -72,7 +72,7 @@ class VipHandler
 	def get_object_by_file_internal_id(obj, attrib, file_internal_id, external_vip_id, external_datetime)
 
 		#grab attribute type from innerattrib (drop _id)
-		attribute_type = attrib[0,attrib.size-4]
+		attribute_type = attrib[0,attrib.size-3]
 		puts attribute_type if Debug > 3
 
 		#get the class corresponding to the parameter	
@@ -133,8 +133,8 @@ class VipHandler
 
 				#this is an ID in the file we need to map
 				#to the database's internal ID
-				referenced_obj = get_obj_by_file_internal_id(obj, attrib, val, 
-				                                             external_vip_id, external_datetime)
+				referenced_obj = get_object_by_file_internal_id(obj, attrib, val, 
+				                                                external_vip_id, external_datetime)
 
 				if !referenced_obj.nil? then
 					# store object id
@@ -154,7 +154,7 @@ class VipHandler
 					puts 'Set '+innerattrib+' to valid object.  Success #'+@resolved.to_s if Debug > 3
 					return true
 
-				else #referenced object is not nil
+				else #referenced object is nil
 					# we haven't found the referenced ID in the stack yet.
 					if store_unresolved
 						save_unresolved(obj,attrib,val)
@@ -266,8 +266,8 @@ class VipHandler
 		else
 			resolve_ids_activerecord
 		end
-
-		puts unresolved_ids.size.to_s + " unresolved IDs" if Debug > 3
+		
+		puts UnresolvedId.count(:conditions => {:source_id => @source.id}).to_s + " unresolved IDs" if Debug > 3
 
 		# add state_id to streets.  this eases later lookup
 		# We use a shortcut when we can, rails convention if we're not sure
@@ -313,17 +313,29 @@ class VipHandler
 		end
 	end
 
-	# go through unresolved IDs and try to match to real objects.  uses ActiveRecord for compatibility
-	def resolve_ids_rails
+	# go through unresolved IDs and try to match to real objects.  if classlist is set, 
+	# only attempt to resolve those classes. uses ActiveRecord for compatibility
+	def resolve_ids_activerecord(classlist = nil)
 		#TODO: switch to UnresolvedId.each with rails 2.3
+		
+		#TODO: a rails bug is preventing the line from being written like this:
+#		conditions = {:source => @source}
+
+		conditions = {"source_id" => @source.id}
+		if classlist
+			conditions[:object_class] = classlist
+		end
+		puts conditions.inspect
+		
 		unresolved_ids = UnresolvedId.find(:all, :select => "id", 
-		                                   :conditions => {:source => @source})
+		                                   :conditions => conditions)
+		puts unresolved_ids.size.to_s + " unresolved to loop" if Debug > 4
 		unresolved_ids.each do |unresolved|
 			#load the rest of the record/object
 			u = UnresolvedId.find(unresolved.id)
 
 			obj = u.object_class.constantize.find_by_id(u.object_id)	
-			if (add_xml_attribute(obj,u.parameter,u.val,false)) then	
+			if (add_xml_attribute(obj,u.parameter,u.val.to_s,false)) then	
 				puts "Resolved" if Debug > 3
 				obj.save
 				u.destroy
@@ -335,7 +347,7 @@ class VipHandler
 
 	# go through unresolved IDs and try to match to real objects.  uses SQL for speed
 	def resolve_ids_sql
-		TopElements.each do |element|
+		(TopElements-["custom_note", "tabulation_area"]).each do |element|
 			paramlist = UnresolvedId.count(:parameter, :group => "parameter",
 			                               :conditions => ["source_id = ? AND object_class = ?", 
 			                                              @source.id, element.camelcase])	
@@ -348,17 +360,19 @@ class VipHandler
 				assoc   = element_klass.reflect_on_association(param_name.to_sym)
 				assoc ||= element_klass.reflect_on_association(param_name.pluralize.to_sym)
 				raise "no reflection between "+element_klass.name+" and "+param_name+" or "+param_name.pluralize unless assoc
+
+				param_class = assoc.class_name
 				case assoc.macro
 					when :has_and_belongs_to_many
-						insert_table = [element_klass.name.tableize, param_name.tableize].sort.join("_")
-						resolve_ids_habtm_sql(@source, element_klass, param, insert_table)
+						insert_table = [element_klass.name.tableize, param_class.tableize].sort.join("_")
+						resolve_ids_habtm_sql(@source, element_klass, param, param_class, insert_table)
 					when :belongs_to
-						resolve_ids_belongs_to_sql(@source, element_klass, param)
+						resolve_ids_belongs_to_sql(@source, element_klass, param, param_class)
 					when :has_many
 						if assoc.options.keys.include?(:through)
 							insert_table = assoc.options[:through].to_s.tableize
 							puts "through: "+insert_table
-							resolve_ids_habtm_sql(@source, element_klass, param, insert_table)
+							resolve_ids_habtm_sql(@source, element_klass, param, param_class, insert_table)
 						else
 							raise "unexpected association macro type :has_many "+element_klass.name+" and "+param_name
 						end
@@ -368,42 +382,75 @@ class VipHandler
 
 			end #each param
 		end #each TopElement
+		resolve_ids_activerecord(["CustomNote","TabulationArea"])
 	end #method
 
 	
 	# resolves HABTM ids. uses SQL for speed
-	def resolve_ids_habtm_sql(source, klass, param, insert_table)
+	def resolve_ids_habtm_sql(source, klass, param, param_class, insert_table)
+
+		temptable = resolve_ids_temptable_sql (source, klass, param, param_class)
+
+		source.connection.execute "
+			INSERT INTO #{insert_table} (#{klass.name.underscore + "_id"}, #{param}) 
+				SELECT object_id, param_id FROM #{temptable};"
+
+		resolve_ids_cleanup_sql(source, temptable)
+
+		return true
+	end
+
+	# resolves belongs_to ids. uses SQL for speed
+	def resolve_ids_belongs_to_sql(source, klass, param, param_class)
+
+		temptable = resolve_ids_temptable_sql (source, klass, param, param_class)
+
+		update_statement = "
+		UPDATE #{klass.name.tableize} SET #{param} = (
+		 SELECT param_id FROM #{temptable} WHERE object_id=#{klass.name.tableize}.id)" 
+		update_statement += " WHERE source_id = #{source.id}" if klass.name != "Source"
+
+		source.connection.execute update_statement
+
+		resolve_ids_cleanup_sql(source, temptable)
+
+		return true
+	end
+
+	# get rid of the resolved ids and table
+	def resolve_ids_cleanup_sql(source, temptable)
+		source.connection.execute "
+		DELETE FROM unresolved_ids 
+		      WHERE EXISTS (SELECT 1 FROM #{temptable} 
+		                     WHERE unresolved_id = unresolved_ids.id)
+		            AND source_id = #{source.id};"
+
+		source.connection.execute "DROP TABLE #{temptable}"
+	end
+		
+
+	#join unresolved ids with the temporary table
+	def resolve_ids_temptable_sql(source, klass, param, param_class)
 
 		temptable = "resolution" + rand(30000).to_s
 		object_class = klass.name
 		object_table = object_class.tableize
-		parameter_table = param[0 .. param.size - 4].tableize
-		statements = []
-		statements.push "
-	CREATE TEMPORARY TABLE #{temptable} 
+		parameter_table = param_class.tableize
+
+		source.connection.execute "
+		CREATE TEMPORARY TABLE #{temptable} 
 		SELECT unresolved_ids.id as unresolved_id, object_table.id AS object_id, parameter_table.id AS param_id
 		  FROM #{object_table} AS object_table, 
 		       #{parameter_table} AS parameter_table,
 		       unresolved_ids
 		 WHERE unresolved_ids.object_id = object_table.id
 		   AND unresolved_ids.object_class = '#{object_class}'
-		   AND unresolved_ids.parameter = parameter_table.file_internal_id
+		   AND unresolved_ids.val = parameter_table.file_internal_id
+		   AND unresolved_ids.parameter = '#{param}'
 		   AND parameter_table.source_id = #{source.id}
 		   AND unresolved_ids.source_id = #{source.id};"
 
-		statements.push "
-	INSERT INTO #{insert_table} (#{object_class.underscore + "_id"}, #{param}) 
-		SELECT object_id, param_id FROM #{temptable};"
-
-		statements.push "
-	DELETE FROM unresolved_ids WHERE EXISTS (SELECT 1 FROM #{temptable} where unresolved_id = id);"
-
-		statements.each{|s| source.connection.execute s}
-	end
-
-	# resolves belongs_to ids. uses SQL for speed
-	def resolve_ids_belongs_to_sql(source, klass, param)
-		puts source.id.to_s + klass.name + param;
+		return temptable
 	end
 
 	# if an attribute of a top-level element, sends attribute and characters to 
