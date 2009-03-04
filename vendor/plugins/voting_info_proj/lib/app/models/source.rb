@@ -18,7 +18,7 @@ class Source < ActiveRecord::Base
 	has_many :unresolved_ids
 	has_many :custom_notes, :as => :object
 
-	has_one :feed_contact, :class_name => 'ElectionOfficial'
+	belongs_to :feed_contact, :class_name => 'ElectionOfficial'
 
 	def import(url, file)
 		@url = url

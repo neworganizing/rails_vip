@@ -58,7 +58,7 @@ class VipHandler
 
 		# we haven't found the referenced ID in the stack yet.
 		# Add it to a table storing unresolved objects
-		save_unresolved if store_unresolved
+		save_unresolved(obj,object_id,store_unresolved) if store_unresolved
 		if store_unresolved
 			save_unresolved(obj,"object_id",object_id)
 		end
@@ -73,7 +73,7 @@ class VipHandler
 	def get_object_by_file_internal_id(obj, attrib, file_internal_id, external_vip_id, external_datetime)
 
 		#grab attribute type from innerattrib (drop _id)
-		attribute_type = attrib[0,attrib.size-3]
+		attribute_type = attrib[0,attrib.size-4]
 		puts attribute_type if Debug > 3
 
 		#get the class corresponding to the parameter	
@@ -262,8 +262,8 @@ class VipHandler
 	def on_end_document()
 
 		if ['PostgreSQL','MySQL'].include?(@source.connection.adapter_name) then
-			#resolve_ids_sql
-			resolve_ids_activerecord
+			resolve_ids_sql
+			#resolve_ids_activerecord
 		else
 			resolve_ids_activerecord
 		end
@@ -338,32 +338,32 @@ class VipHandler
 	def resolve_ids_sql
 		TopElements.each do |element|
 			paramlist = UnresolvedId.count(:parameter, :group => "parameter",
-			                               :condition => ["source_id = ? AND class_type = ?", 
+			                               :conditions => ["source_id = ? AND object_class = ?", 
 			                                              @source.id, element.camelcase])	
 			paramlist.each do |param,cnt|
 				#all params are ids, chop the last 3
-				param_name = param[0 .. param.size - 3]
+				param_name = param[0 .. param.size - 4]
 
 				#get the type of association
 				element_klass = element.camelcase.constantize
 				assoc   = element_klass.reflect_on_association(param_name.to_sym)
 				assoc ||= element_klass.reflect_on_association(param_name.pluralize.to_sym)
-
+				raise "no reflection between "+element_klass.name+" and "+param_name+" or "+param_name.pluralize unless assoc
 				case assoc.macro
 					when :has_and_belongs_to_many
-						insert_table = [klass.tableize, param_name.tableize].sort.join("_")
-						resolve_ids_habtm_sql(@source, klass, param, insert_table)
+						insert_table = [element_klass.name.tableize, param_name.tableize].sort.join("_")
+						resolve_ids_habtm_sql(@source, element_klass, param, insert_table)
 					when :belongs_to
-						resolve_ids_belongs_to_sql(@source, klass, param)
+						resolve_ids_belongs_to_sql(@source, element_klass, param)
 					when :has_many
 						if assoc.options.keys.include?(:through)
 							insert_table = assoc.options["through"].to_s.tableize
-							resolve_ids_habtm_sql(@source, klass, param, insert_table)
+							resolve_ids_habtm_sql(@source, element_klass, param, insert_table)
 						else
-							raise "unexpected association macro type"
+							raise "unexpected association macro type :has_many "+element_klass.name+" and "+param_name
 						end
 					when :has_one
-						raise "unexpected association macro type"
+						raise "unexpected association macro type :has_one between "+element_klass.name+" and "+param_name
 				end #case
 
 			end #each param
@@ -374,30 +374,31 @@ class VipHandler
 	# resolves HABTM ids. uses SQL for speed
 	def resolve_ids_habtm_sql(source, klass, param, insert_table)
 
-		temptable = resolution + rand(30000).to_s
+		temptable = "resolution" + rand(30000).to_s
 		object_class = klass.name
 		object_table = object_class.tableize
 		parameter_table = param[0 .. param.size - 4].tableize
-		source.connection.execute "
-BEGIN
+		statements = []
+		statements.push "
 	CREATE TEMPORARY TABLE #{temptable} 
 		SELECT unresolved_ids.id as unresolved_id, object_table.id AS object_id, parameter_table.id AS param_id
 		  FROM #{object_table} AS object_table, 
 		       #{parameter_table} AS parameter_table,
 		       unresolved_ids
 		 WHERE unresolved_ids.object_id = object_table.id
-		   AND unresolved_ids.object_class = #{object_class}
+		   AND unresolved_ids.object_class = '#{object_class}'
 		   AND unresolved_ids.parameter = parameter_table.file_internal_id
 		   AND parameter_table.source_id = #{source.id}
-		   AND unresolved_ids.source_id = #{source.id};
+		   AND unresolved_ids.source_id = #{source.id};"
 
-	INSERT INTO #{insert_table} (#{object_class.underscore + "_id"}, #{param}) VALUES
-		SELECT object_id, param_id FROM #{temptable};
+		statements.push "
+	INSERT INTO #{insert_table} (#{object_class.underscore + "_id"}, #{param}) 
+		SELECT object_id, param_id FROM #{temptable};"
 
-	DELETE FROM unresolved_ids WHERE EXISTS (SELECT 1 FROM #{temptable} where unresolved_id = id);
+		statements.push "
+	DELETE FROM unresolved_ids WHERE EXISTS (SELECT 1 FROM #{temptable} where unresolved_id = id);"
 
-COMMIT"
-
+		statements.each{|s| source.connection.execute s}
 	end
 
 	# resolves belongs_to ids. uses SQL for speed

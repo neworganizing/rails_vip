@@ -43,6 +43,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :tabulation_area
   map.resources :precinct
   map.resources :election
+  map.resources :street_segment
   map.resources :ballot_drop_location
   map.resources :polling_location
   map.resources :precinct_split
