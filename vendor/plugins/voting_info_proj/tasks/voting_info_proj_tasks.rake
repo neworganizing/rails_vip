@@ -38,21 +38,35 @@ namespace :vip do
 			FileUtils.mkdir_p temppath
 			fullfile = temppath + '/' + filename
 
-			open(fullfile, "wb") { |file|
-				if uri.scheme.eql?('http')
-					Net::HTTP.start(uri.host) { |http|
+			if uri.scheme.eql?('http')
+				Net::HTTP.start(uri.host) { |http|
+					open(fullfile, "wb") { |file|
+						puts "Starting HTTP download"
 						resp = http.get(uri.path)
 						file.write(resp.body)
 					}
-				elsif uri.scheme.eql?('ftp')
-					Net::FTP.start(uri.host) { |ftp|
-						resp = ftp.get(uri.path)
-						file.write(resp.body)
-					}
-				else
-					raise "unexpected url scheme: "+uri.scheme
-				end
-			}
+				}
+			elsif uri.scheme.eql?('ftp')
+				pieces = uri.path.split('/')
+				dir = pieces[0 .. pieces.size-2].join('/')
+				ftpfile = pieces.last
+				Net::FTP.open(uri.host) { |ftp|
+					puts ftp.last_response
+					ftp.login
+					puts ftp.last_response
+					puts "FTP Logged in"
+					ftp.chdir(dir)
+					puts ftp.last_response
+					puts ftp.ls
+					puts ftp.last_response
+					puts "Requesting: "+ftpfile
+					resp = ftp.gettextfile(ftpfile, fullfile)
+					puts ftp.last_response
+					puts "File acquired"
+				}
+			else
+				raise "unexpected url scheme: "+uri.scheme
+			end
 			if (filetype == 'zip') then #unzip
 				require 'zip/zip'
 
