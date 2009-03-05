@@ -6,8 +6,8 @@ class LocalityController < ApplicationController
 
 	def index
 		if (params["source"])
-			source = Source.find(params["source"])
-			@localities = source.localities
+			@source = Source.find(params["source"])
+			@localities = @source.localities
 		else
 			@localities = Locality.find(:all)
 		end
