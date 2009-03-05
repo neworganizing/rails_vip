@@ -17,6 +17,7 @@ namespace :vip do
 
 		if file.nil? then #download file from url
 			require 'net/http'		
+			require 'net/ftp'		
 			require 'uri'
 
 			uri = URI.parse(url)
@@ -38,10 +39,19 @@ namespace :vip do
 			fullfile = temppath + '/' + filename
 
 			open(fullfile, "wb") { |file|
-				Net::HTTP.start(uri.host) { |http|
-					resp = http.get(uri.path)
-					file.write(resp.body)
-				}
+				if uri.scheme.eql?('http')
+					Net::HTTP.start(uri.host) { |http|
+						resp = http.get(uri.path)
+						file.write(resp.body)
+					}
+				elsif uri.scheme.eql?('ftp')
+					Net::FTP.start(uri.host) { |ftp|
+						resp = ftp.get(uri.path)
+						file.write(resp.body)
+					}
+				else
+					raise "unexpected url scheme: "+uri.scheme
+				end
 			}
 			if (filetype == 'zip') then #unzip
 				require 'zip/zip'
