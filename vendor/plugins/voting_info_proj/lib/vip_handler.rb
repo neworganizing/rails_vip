@@ -37,7 +37,7 @@ class VipHandler
 		# save it to a stack.  We'll store it when the object gets an ID
 		@unresolved_ids.push(badone)
 
-		puts 'Added '+attrib+' to resolution list.  Fail #'+@unresolved.to_s if Debug > 3
+		puts 'Added '+attrib+' to resolution list.  Fail.' if Debug > 3
 	end
 
 	def store_arbitrary_object_reference(obj,object_id, store_unresolved)
@@ -85,6 +85,7 @@ class VipHandler
 		#TODO: test external links functionality
 		# look up the external source if it's referenced
 		if (external_vip_id and external_datetime) then
+			puts "External" if Debug > 3
 			obj_source = Source.find(:first, :conditions => 
 						 ["date = ? AND vip_id = ?", 
 		                                  external_datetime,
@@ -94,7 +95,7 @@ class VipHandler
 		#find the referenced object.  only grab the id...we just save a ref to the object
 		obj_source.nil? ? nil : attribute_class.find(:first, 
 		                                             :conditions => ["source_id = ? AND file_internal_id = ?", 
-		                                                             obj_source.id, val ], 
+		                                                             obj_source.id, file_internal_id ], 
 		                                             :select => "id")
 	end
 
@@ -135,6 +136,7 @@ class VipHandler
 				#to the database's internal ID
 				referenced_obj = get_object_by_file_internal_id(obj, attrib, val, 
 				                                                external_vip_id, external_datetime)
+				puts referenced_obj.inspect if Debug > 9
 
 				if !referenced_obj.nil? then
 					# store object id
@@ -151,7 +153,7 @@ class VipHandler
 						eval('obj.'+plural_attrib).push referenced_obj
 					end
 
-					puts 'Set '+innerattrib+' to valid object.  Success #'+@resolved.to_s if Debug > 3
+					puts 'Set '+innerattrib+' to valid object.  Success.' if Debug > 3
 					return true
 
 				else #referenced object is nil
@@ -168,7 +170,6 @@ class VipHandler
 				end #if referenced_obj.nil?
 					
 			else #just a normal attribute, not an object reference
-
 
 				obj.[]=(innerattrib,val)
 
@@ -187,10 +188,6 @@ class VipHandler
 	# sets several variables used in the rest of the application.  also
 	# links source to contributor if defined
 	def initialize(contributor = nil)
-		#debug
-		@resolved = 0
-		@unresolved = 0
-
 		#stack of xml elements and attributes
 		@stack       = [];
 

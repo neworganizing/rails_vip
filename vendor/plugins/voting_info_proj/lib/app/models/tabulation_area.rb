@@ -6,8 +6,7 @@ class TabulationArea < ActiveRecord::Base
 	has_and_belongs_to_many :precincts
 	has_and_belongs_to_many :precinct_splits
 	has_and_belongs_to_many :localities
-	has_many :tabulation_areas, :through => "tabulation_areas"
-        belongs_to :tabulation_areas, :foreign_key => "parent"
+	has_many :tabulation_areas
 	has_many :contests
 	has_many :custom_notes, :as => :object
 	alias_attribute :state, :statewide_state
