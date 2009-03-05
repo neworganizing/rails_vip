@@ -322,7 +322,6 @@ class VipHandler
 		if classlist
 			conditions[:object_class] = classlist
 		end
-		puts conditions.inspect
 		
 		unresolved_ids = UnresolvedId.find(:all, :select => "id", 
 		                                   :conditions => conditions)
