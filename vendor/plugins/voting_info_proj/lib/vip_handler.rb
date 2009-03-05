@@ -367,7 +367,6 @@ class VipHandler
 					when :has_many
 						if assoc.options.keys.include?(:through)
 							insert_table = assoc.options[:through].to_s.tableize
-							puts "through: "+insert_table
 							resolve_ids_habtm_sql(@source, element_klass, param, param_class, insert_table)
 						else
 							raise "unexpected association macro type :has_many "+element_klass.name+" and "+param_name
@@ -385,7 +384,7 @@ class VipHandler
 	# resolves HABTM ids. uses SQL for speed
 	def resolve_ids_habtm_sql(source, klass, param, param_class, insert_table)
 
-		temptable = resolve_ids_temptable_sql (source, klass, param, param_class)
+		temptable = resolve_ids_temptable_sql(source, klass, param, param_class)
 
 		source.connection.execute "
 			INSERT INTO #{insert_table} (#{klass.name.underscore + "_id"}, #{param}) 
@@ -399,7 +398,7 @@ class VipHandler
 	# resolves belongs_to ids. uses SQL for speed
 	def resolve_ids_belongs_to_sql(source, klass, param, param_class)
 
-		temptable = resolve_ids_temptable_sql (source, klass, param, param_class)
+		temptable = resolve_ids_temptable_sql(source, klass, param, param_class)
 
 		update_statement = "
 		UPDATE #{klass.name.tableize} SET #{param} = (
