@@ -42,8 +42,9 @@ namespace :vip do
 				Net::HTTP.start(uri.host) { |http|
 					open(fullfile, "wb") { |file|
 						puts "Starting HTTP download"
-						resp = http.get(uri.path)
-						file.write(resp.body)
+						resp = http.get(uri.path) {|httpline|
+							file.write(httpline)
+						}
 					}
 				}
 			elsif uri.scheme.eql?('ftp')
@@ -78,7 +79,9 @@ namespace :vip do
 				end
 				open(xmlfile, "wb") { |fyle|
 					Zip::ZipFile.open(fullfile) {|f|
-						fyle.write(f.read(xmlname))
+						f.get_output_stream(xmlname) {|zipline|
+							fyle.write(zipline)
+						}
 					}
 				}
 				file = xmlfile
