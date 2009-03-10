@@ -445,6 +445,12 @@ class VipHandler
 		   AND parameter_table.source_id = #{source.id}
 		   AND unresolved_ids.source_id = #{source.id};"
 
+		source.connection.execute "
+		CREATE INDEX idx_#{temptable}_unresolved_id on #{temptable} (unresolved_id)"
+
+		source.connection.execute "
+		CREATE INDEX idx_#{temptable}_object_id on #{temptable} (object_id)"
+
 		return temptable
 	end
 
