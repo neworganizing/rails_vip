@@ -79,7 +79,7 @@ namespace :vip do
 				end
 				open(xmlfile, "wb") { |fyle|
 					Zip::ZipFile.open(fullfile) {|f|
-						f.get_output_stream(xmlname) {|zipline|
+						f.get_input_stream(xmlname) {|zipline|
 							fyle.write(zipline)
 						}
 					}
