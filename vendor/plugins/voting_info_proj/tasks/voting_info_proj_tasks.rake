@@ -47,6 +47,8 @@ namespace :vip do
 						}
 					}
 				}
+				puts "File acquired"
+
 			elsif uri.scheme.eql?('ftp')
 				pieces = uri.path.split('/')
 				dir = pieces[0 .. pieces.size-2].join('/')
@@ -56,19 +58,23 @@ namespace :vip do
 					ftp.login
 					puts ftp.last_response
 					puts "FTP Logged in"
+					ftp.passive = TRUE
+					ftp.binary = TRUE
 					ftp.chdir(dir)
 					puts ftp.last_response
 					puts ftp.ls
 					puts ftp.last_response
 					puts "Requesting: "+ftpfile
-					resp = ftp.gettextfile(ftpfile, fullfile)
+					resp = ftp.getbinaryfile(ftpfile, fullfile)
 					puts ftp.last_response
 					puts "File acquired"
 				}
 			else
 				raise "unexpected url scheme: "+uri.scheme
 			end
+
 			if (filetype == 'zip') then #unzip
+				puts "Unzipping File"
 				require 'zip/zip'
 
 				#assume that the .zip file is named the same as the file it contains
@@ -78,12 +84,12 @@ namespace :vip do
 					xmlname = xmlname + ".xml"
 				end
 				open(xmlfile, "wb") { |fyle|
-					Zip::ZipFile.open(fullfile) {|f|
-						f.get_input_stream(xmlname) {|zipline|
-							fyle.write(zipline)
-						}
-					}
-				}
+				  Zip::ZipFile.open(fullfile) {|f|
+				    f.get_input_stream(xmlname) {|zipstream|
+				      zipstream.each {|zipline|
+				        fyle.write(zipline)
+				} } } }
+
 				file = xmlfile
 			else #wasn't zipped
 				file = fullfile
