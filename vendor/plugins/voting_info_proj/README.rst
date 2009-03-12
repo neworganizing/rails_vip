@@ -1,13 +1,12 @@
 VotingInfoProj
 ==============
 
-This plugin will let you use the Voting Information Project's data in your own election information application.  
+This plugin will let you use the Voting Information Project's data in your own election information application.  It provides rake tasks for importing source files and models for using the data. Default controllers are not included, though basic ones can be copied from the `Demo app http://github.com/neworganizing/rails_vip_demo`.
 
 Requirements 
 ------------
 
-acts_as_tree plugin
-ym4r_gm plugin (if you'll be using the included lookup or views) http://rubyforge.org/projects/ym4r/
+* acts_as_tree plugin
 
 
 getting started
