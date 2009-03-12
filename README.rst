@@ -13,15 +13,20 @@ getting started
 ---------------
 
 * Modify routes.rb
-   - add the following line ::
+
+add the following line ::
+
   map.voting_info_proj
 
 * Use the rake task to import data
-   - Example ::
+
+Example ::
+
   rake vip:parse VIP_URL=http://election-info-standard.googlecode.com/files/sample%20feed%20for%20v1.5.xml RAILS_ENV=production
 
 * Use the plugin's models to display voting information
-   - For polling location lookups, use StreetSegment.find_by_address
+
+For polling location lookups, use StreetSegment.find_by_address
 
 Future work
 -----------
