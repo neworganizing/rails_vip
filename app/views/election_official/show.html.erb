@@ -1,9 +1,0 @@
-<%= link_to @election_official.source.name, @election_official.source %> &gt;&gt; <%= @election_official.name %> 
-<br/>
-<table>
-<tr><td><b>name</b></td><td><%=h @election_official.name %></td></tr>
-<tr><td><b>title</b></td><td><%=h @election_official.title? ? @election_official.title : '' %></td></tr>
-<tr><td><b>phone</b></td><td><%=h @election_official.phone? ? @election_official.phone : '' %></td></tr>
-<tr><td><b>fax</b></td><td><%=h @election_official.fax? ? @election_official.fax : '' %></td></tr>
-<tr><td><b>email</b></td><td><%= @election_official.email? ? '<a href="mailto:'+@election_official.email+'">'+@election_official.email+'</a>' : '' %></td></tr>
-</table>
