@@ -1,6 +1,7 @@
-# VotingInfoProj
+# VotingInfoProj 
 
 require "voting_info_proj/routing"
+require "libxml" 
 
 %w{ views controllers models }.each do |dir|
   path = File.join(File.dirname(__FILE__), 'app', dir)
