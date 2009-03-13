@@ -1,4 +1,0 @@
-class streetaddress < ActiveRecord::Base
-	belongs_to :streetsegment
-	belongs_to :source
-end
