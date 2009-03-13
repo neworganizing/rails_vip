@@ -7,6 +7,7 @@ Requirements
 ------------
 
 * acts_as_tree plugin
+* libxml gem
 
 
 getting started

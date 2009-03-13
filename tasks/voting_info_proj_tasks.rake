@@ -95,7 +95,7 @@ namespace :vip do
 				file = fullfile
 			end
 		end
-		s.import(url,file)
+		s.import(file,url)
 	end
 
 	desc "Deactivate source"
