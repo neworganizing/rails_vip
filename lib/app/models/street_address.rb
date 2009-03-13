@@ -5,6 +5,7 @@ class StreetAddress < ActiveRecord::Base
 	belongs_to :state
 	has_many :custom_notes, :as => :object
 
+	# returns any street segments that this address starts or ends
 	def street_segments
 		start_street_segments + end_street_segments
 	end

@@ -7,7 +7,7 @@ class PrecinctSplit < ActiveRecord::Base
 
 	has_many :custom_notes, :as => :object
 
-	# Uses StreetSegment.find_by_address to return a street segment based on an address
+	# Uses StreetSegment.find_by_address to find a precinct split based on an address
 	def find_by_address(address)
 		ss = StreetSegment.new.find_by_address(address)
 		ss.nil? ? nil : ss.precinct_split

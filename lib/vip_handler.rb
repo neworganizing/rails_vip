@@ -25,6 +25,8 @@ class VipHandler
 	# don't try to map the following ID elements to objects
 	IdExceptions = ["vip_id", "file_internal_id"]
 
+	# store the file_internal_id and other arguments referencing
+	# an object that hasn't been stored yet
 	def save_unresolved(obj,attrib,val)
 		# Add it to a table storing unresolved objects
 		badone = UnresolvedId.new do |u|
@@ -40,6 +42,9 @@ class VipHandler
 		puts 'Added '+attrib+' to resolution list.  Fail.' if Debug > 3
 	end
 
+	# search through all classes to find the referenced file_internal_id.
+	# stores an unresolvedId object and returns false on failure, returns
+	# object if found successfully 
 	def store_arbitrary_object_reference(obj,object_id, store_unresolved)
 		(TopElements-["source"]).each do |top|
 			puts "trying "+top+" class" if Debug > 4
@@ -69,7 +74,10 @@ class VipHandler
 	end
 
 
-	def get_object_by_file_internal_id(obj, attrib, file_internal_id, external_vip_id, external_datetime)
+	# return an object based on the file_internal_id. looks at obj and attrib to 
+	# determine what type of object to return.  if external_vip_id and external_datetime
+	# are set, that referenced source will be searched
+	def get_object_by_file_internal_id(obj, attrib, file_internal_id, external_vip_id = nil, external_datetime = nil)
 
 		#grab attribute type from innerattrib (drop _id)
 		attribute_type = attrib[0,attrib.size-3]
@@ -486,6 +494,6 @@ class VipHandler
 		end #store_chars
 	end
 
-	def method_missing(method_name, *attributes, &block)
+	def method_missing(method_name, *attributes, &block) #:nodoc:
 	end
 end

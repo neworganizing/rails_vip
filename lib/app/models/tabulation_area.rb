@@ -11,6 +11,7 @@ class TabulationArea < ActiveRecord::Base
 	has_many :custom_notes, :as => :object
 	alias_attribute :state, :statewide_state
 
+	# alias for self.children.  returns only direct children
 	def tabulation_areas
 		self.children
 	end

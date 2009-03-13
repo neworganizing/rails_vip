@@ -1,6 +1,8 @@
-module VotingInfoProj #:nodoc:
+module VotingInfoProj #:nodoc: 
   module Routing #:nodoc:
     module MapperExtensions
+
+      #load controllers for plugin
       def voting_info_proj
 #        @set.add_route("/precinct", {:controller => "precinct", :action => "index"})
 #        @set.add_route("/precinct/:action", {:controller => "precinct"})

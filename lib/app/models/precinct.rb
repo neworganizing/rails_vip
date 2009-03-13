@@ -22,7 +22,7 @@ class Precinct < ActiveRecord::Base
 		end
 	end
 
-	# Uses StreetSegment.find_by_address to return a street segment based on an address
+	# Uses StreetSegment.find_by_address to find a precinct based on an address
 	def find_by_address(address)
 		ss = StreetSegment.find_by_address(address)
 		ss.nil? ? nil : ss.precinct
@@ -34,8 +34,9 @@ class Precinct < ActiveRecord::Base
 		all_tabs.collect{|t| t.contests}.flatten.uniq
 	end
 
-	# return all ballot drop locations, or, if none present, other ballot drop locations in same locality.
 	alias_method :ballot_drop_locations_builtin, :ballot_drop_locations
+
+	# return all ballot drop locations, or, if none present, other ballot drop locations in same locality.
 	def ballot_drop_locations
 		bdls = ballot_drop_locations_builtin
 		if (bdls.size == 0)
