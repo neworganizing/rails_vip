@@ -31,6 +31,7 @@ For polling location lookups, use StreetSegment.find_by_address
 
 Future work
 -----------
+* tests
 * ignore bad tags, according to spec
 * external links
 * handle ballot candidate order 
