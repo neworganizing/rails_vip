@@ -2,7 +2,6 @@ class VipHandler
 	# Parses Voting Information Project format version 1.4
 	
 	require 'rubygems'
-	require 'ruby-prof'	
 	require 'libxml'
 
 	include LibXML::XML::SaxParser::Callbacks
