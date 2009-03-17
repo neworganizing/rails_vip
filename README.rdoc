@@ -10,30 +10,19 @@ This plugin will let you use the Voting Information Project's data in your own e
 
 == Getting started
 
-* Install the plugin ...
-
-As a git submodule 
-
-  git submodule add git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
-
-Or, a new git repo
-
-  git clone git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
-
-Or, just download[http://github.com/neworganizing/rails_vip/tree/master] and copy to vendor/plugins
-
-* Run migrations 
-
-  ./script/generate rails_vip_migration
-  rake db:migrate
-
-* Use the rake task to import data
-
-Example 
-
-  rake vip:parse VIP_URL=http://election-info-standard.googlecode.com/files/sample%20feed%20for%20v1.5.xml RAILS_ENV=production
-
-* Make views, (optionally controllers), map resources
+* <b>Install the plugin ...</b>
+  As a git submodule 
+    git submodule add git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
+  Or, a new git repo
+    git clone git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
+  Or, just download[http://github.com/neworganizing/rails_vip/tree/master] and copy to vendor/plugins
+* <b>Run migrations</b>
+    ./script/generate rails_vip_migration
+    rake db:migrate
+* <b>Use the rake task to import data</b>
+  Example 
+    rake vip:parse VIP_URL=http://election-info-standard.googlecode.com/files/sample%20feed%20for%20v1.5.xml RAILS_ENV=production
+* <b>Make views, (optionally controllers), map resources</b>
 
 == Future work
 * tests
