@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Tue Mar 17 17:34:37 +0000 2009</td>
+      <td>Tue Mar 17 17:50:58 +0000 2009</td>
     </tr>
     </table>
   </div>
@@ -89,10 +89,8 @@ apps/controllers. If you&#8216;re interested in sample views, check out the
 </ul>
 <h2>Getting started</h2>
 <ul>
-<li>Install the plugin &#8230;
+<li><b>Install the plugin &#8230;</b>
 
-</li>
-</ul>
 <p>
 As a git submodule
 </p>
@@ -110,25 +108,24 @@ Or, just <a
 href="http://github.com/neworganizing/rails_vip/tree/master">download</a>
 and copy to vendor/plugins
 </p>
-<ul>
-<li>Run migrations
-
-<p>
-./script/generate rails_vip_migration rake db:migrate
-</p>
 </li>
-<li>Use the rake task to import data
+<li><b>Run migrations</b>
 
+<pre>
+  ./script/generate rails_vip_migration
+  rake db:migrate
+</pre>
 </li>
-</ul>
+<li><b>Use the rake task to import data</b>
+
 <p>
 Example
 </p>
 <pre>
   rake vip:parse VIP_URL=http://election-info-standard.googlecode.com/files/sample%20feed%20for%20v1.5.xml RAILS_ENV=production
 </pre>
-<ul>
-<li>Make views, (optionally controllers), map resources
+</li>
+<li><b>Make views, (optionally controllers), map resources</b>
 
 </li>
 </ul>
