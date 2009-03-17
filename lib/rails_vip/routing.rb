@@ -1,9 +1,9 @@
-module VotingInfoProj #:nodoc: 
+module RailsVip #:nodoc: 
   module Routing #:nodoc:
     module MapperExtensions
 
       #load controllers for plugin
-      def voting_info_proj
+      def rails_vip
 #        @set.add_route("/precinct", {:controller => "precinct", :action => "index"})
 #        @set.add_route("/precinct/:action", {:controller => "precinct"})
 #        @set.add_route("/precinct/:action/:id", {:controller => "precinct"})
@@ -17,4 +17,4 @@ module VotingInfoProj #:nodoc:
   end
 end
 
-ActionController::Routing::RouteSet::Mapper.send :include, VotingInfoProj::Routing::MapperExtensions
+ActionController::Routing::RouteSet::Mapper.send :include, RailsVip::Routing::MapperExtensions

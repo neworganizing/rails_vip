@@ -1,6 +1,6 @@
-# VotingInfoProj 
+# RailsVip
 
-require "voting_info_proj/routing"
+require "rails_vip/routing"
 require "libxml" 
 
 %w{ views controllers models }.each do |dir|

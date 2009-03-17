@@ -2,7 +2,7 @@ Description:
 	Creates a migration that adds all the necessary tables for VIP models
 
 Example:
-	./script/generate voting_info_proj
+	./script/generate rails_vip_migration
 
 	This will create
-		db/migrate/TIMESTAMP_add_voting_info_proj
+		db/migrate/TIMESTAMP_rails_vip_plugin
