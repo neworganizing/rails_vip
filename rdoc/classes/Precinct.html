@@ -86,10 +86,10 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000007">ballot_drop_locations</a>&nbsp;&nbsp;
-      <a href="#M000004">before_save</a>&nbsp;&nbsp;
-      <a href="#M000006">contests</a>&nbsp;&nbsp;
-      <a href="#M000005">find_by_address</a>&nbsp;&nbsp;
+      <a href="#M000030">ballot_drop_locations</a>&nbsp;&nbsp;
+      <a href="#M000027">before_save</a>&nbsp;&nbsp;
+      <a href="#M000029">contests</a>&nbsp;&nbsp;
+      <a href="#M000028">find_by_address</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -124,11 +124,11 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000007" class="method-detail">
-        <a name="M000007"></a>
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
 
         <div class="method-heading">
-          <a href="#M000007" class="method-signature">
+          <a href="#M000030" class="method-signature">
           <span class="method-name">ballot_drop_locations</span><span class="method-args">()</span>
           </a>
         </div>
@@ -139,8 +139,8 @@ return all ballot drop locations, or, if none present, other ballot drop
 locations in same locality.
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000007-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000007-source">
+            onclick="toggleCode('M000030-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000030-source">
 <pre>
     <span class="ruby-comment cmt"># File lib/app/models/precinct.rb, line 40</span>
 40:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">ballot_drop_locations</span>
@@ -156,11 +156,11 @@ locations in same locality.
         </div>
       </div>
 
-      <div id="method-M000004" class="method-detail">
-        <a name="M000004"></a>
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
 
         <div class="method-heading">
-          <a href="#M000004" class="method-signature">
+          <a href="#M000027" class="method-signature">
           <span class="method-name">before_save</span><span class="method-args">()</span>
           </a>
         </div>
@@ -170,8 +170,8 @@ locations in same locality.
 Defaults mail_only to &#8216;no&#8217; if ward is nil, per spec
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000004-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000004-source">
+            onclick="toggleCode('M000027-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000027-source">
 <pre>
     <span class="ruby-comment cmt"># File lib/app/models/precinct.rb, line 19</span>
 19:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">before_save</span>
@@ -184,23 +184,23 @@ Defaults mail_only to &#8216;no&#8217; if ward is nil, per spec
         </div>
       </div>
 
-      <div id="method-M000006" class="method-detail">
-        <a name="M000006"></a>
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
 
         <div class="method-heading">
-          <a href="#M000006" class="method-signature">
+          <a href="#M000029" class="method-signature">
           <span class="method-name">contests</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-return all <a href="Precinct.html#M000006">contests</a> that apply to this
+return all <a href="Precinct.html#M000029">contests</a> that apply to this
 precinct
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000006-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000006-source">
+            onclick="toggleCode('M000029-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000029-source">
 <pre>
     <span class="ruby-comment cmt"># File lib/app/models/precinct.rb, line 32</span>
 32:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">contests</span>
@@ -212,23 +212,23 @@ precinct
         </div>
       </div>
 
-      <div id="method-M000005" class="method-detail">
-        <a name="M000005"></a>
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
 
         <div class="method-heading">
-          <a href="#M000005" class="method-signature">
+          <a href="#M000028" class="method-signature">
           <span class="method-name">find_by_address</span><span class="method-args">(address)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Uses <a href="StreetSegment.html#M000034">StreetSegment.find_by_address</a>
+Uses <a href="StreetSegment.html#M000067">StreetSegment.find_by_address</a>
 to find a precinct based on an address
 </p>
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000005-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000005-source">
+            onclick="toggleCode('M000028-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000028-source">
 <pre>
     <span class="ruby-comment cmt"># File lib/app/models/precinct.rb, line 26</span>
 26:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">find_by_address</span>(<span class="ruby-identifier">address</span>)

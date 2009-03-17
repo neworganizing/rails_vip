@@ -1,50 +1,41 @@
-VotingInfoProj
-==============
+= VotingInfoProj
 
-This plugin will let you use the Voting Information Project's data in your own election information application.  It provides rake tasks for importing source files and models for using the data. Simple default controllers are included, but can be superceded by any you create in apps/controllers.  If you're interested in sample views, check out the `Demo app <http://github.com/neworganizing/rails_vip_demo>`_.
+This plugin will let you use the Voting Information Project's data in your own election information application.  It provides rake tasks for importing source files and models for using the data. Simple default controllers are included, but can be superceded by any you create in apps/controllers.  If you're interested in sample views, check out the {demo app}[http://github.com/neworganizing/rails_vip_demo].
 
-Requirements 
-------------
+== Requirements 
 
 * acts_as_tree plugin
 * libxml-ruby gem
 
 
-Getting started
----------------
+== Getting started
 
-* Install the plugin
+* Install the plugin ...
 
-Git Submodule ::
+As a git submodule 
 
   git submodule add git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
 
-Or, New git repository ::
+Or, a new git repo
 
   git clone git://github.com/neworganizing/rails_vip.git vendor/plugins/rails_vip
 
-Or, just `download <http://github.com/neworganizing/rails_vip/tree/master#>` and copy to vendor/plugins
+Or, just download[http://github.com/neworganizing/rails_vip/tree/master] and copy to vendor/plugins
 
-* Run migrations ::
+* Run migrations 
 
   ./script/generate rails_vip_migration
   rake db:migrate
 
-* Modify routes.rb
-
-add the following line ::
-
-  map.voting_info_proj
-
 * Use the rake task to import data
 
-Example ::
+Example 
 
   rake vip:parse VIP_URL=http://election-info-standard.googlecode.com/files/sample%20feed%20for%20v1.5.xml RAILS_ENV=production
 
+* Make views, (optionally controllers), map resources
 
-Future work
------------
+== Future work
 * tests
 * ignore bad tags, according to spec
 * external links
