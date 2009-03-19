@@ -38,7 +38,7 @@ namespace :vip do
 			FileUtils.mkdir_p temppath
 			fullfile = temppath + '/' + filename
 
-			if uri.scheme.eql?('http')
+			if uri.scheme.eql?('http') or uri.scheme.eql?('https')
 				Net::HTTP.start(uri.host) { |http|
 					open(fullfile, "wb") { |file|
 						puts "Starting HTTP download"
