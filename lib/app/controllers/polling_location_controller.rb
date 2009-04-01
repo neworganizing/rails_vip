@@ -27,7 +27,6 @@ class PollingLocationController < ApplicationController
 		address_versions.each do |addr|
 			if @polling_loc_std.nil? then
 				begin
-					puts addr
 					@polling_loc_std = gg.locate addr
 				rescue
 					@polling_loc_std = nil
