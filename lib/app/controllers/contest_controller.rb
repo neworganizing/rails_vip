@@ -2,12 +2,14 @@ class ContestController < ApplicationController
 
 	def show
 		@contest = Contest.find(params[:id])
-		@referendum = @contest.ballot.referendum
-		@responses = []
-		if @referendum and @referendum.ballot_responses.count > 0
-			@responses = @referendum.ballot_responses.collect &:text
+		if @contest
+			@referendum = @contest.ballot.referendum if @contest.ballot
+			@responses = []
+			if @referendum and @referendum.ballot_responses.count > 0
+				@responses = @referendum.ballot_responses.collect &:text
+			end
+			@candidates = @contest.ballot.candidates.size > 0 ? @contest.ballot.candidates : nil
 		end
-		@candidates = @contest.ballot.candidates.size > 0 ? @contest.ballot.candidates : nil
 	end
 
 	def index

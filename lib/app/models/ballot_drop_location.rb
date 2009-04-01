@@ -15,6 +15,6 @@ class BallotDropLocation < ActiveRecord::Base
 		                                          :joins => "LEFT JOIN ballot_drop_locations_precincts jointable
 		                                                            ON jointable.precinct_id = precincts.id",
 		                                          :conditions => ["jointable.ballot_drop_location_id IS NULL AND
-		                                                          precincts.locality_id = ?", self.id])
+		                                                          precincts.locality_id = ?", self.locality_id])
 	end
 end
