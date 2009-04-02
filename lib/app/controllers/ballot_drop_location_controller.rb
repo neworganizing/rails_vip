@@ -12,7 +12,7 @@ class BallotDropLocationController < ApplicationController
 			@locality = Locality.find(params["locality"])
 			@ballot_drop_locations = @locality.ballot_drop_locations
 		else
-			@localities = Locality.find(:all)
+			@ballot_drop_locations = BallotDropLocation.find(:all)
 		end
 	end
 end
