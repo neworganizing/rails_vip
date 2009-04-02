@@ -17,9 +17,9 @@ class TabulationAreaController < ApplicationController
 	def index
 		if (params["source"])
 			source = Source.find(params["source"])
-			@localities = source.localities
+			@tabulation_areas = source.tabulation_areas
 		else
-			@localities = Locality.find(:all)
+			@tabulation_areas = TabulationArea.find(:all)
 		end
 	end
 end
