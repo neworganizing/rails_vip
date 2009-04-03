@@ -68,9 +68,11 @@ class StreetSegment < ActiveRecord::Base
 					             start.state_id=s.id",
 			                             street_name, street_name, 
 			                             street_dir, street_dir, 
-			                             street_suff, street_suff, 
+			                             street_suffix, street_suffix, 
 
 		                                     street_num, street_num, 
+		                                     address_dir, address_dir, 
+
 			                             even_odd, city, city, state]
 		)
 		
