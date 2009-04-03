@@ -56,8 +56,8 @@ class StreetSegment < ActiveRecord::Base
 						     (start.std_house_number <= ? OR start.std_house_number IS NULL) AND 
 						     (end.std_house_number >= ? OR end.std_house_number IS NULL) AND
 
-						    ((start.address_dir = ? AND end.address_dir = ?) OR
-						     (start.address_dir IS NULL AND end.address_dir IS NULL)) AND
+						    ((start.address_direction = ? AND end.address_direction = ?) OR
+						     (start.address_direction IS NULL AND end.address_direction IS NULL)) AND
 		                                     
 		                                     street_segments.odd_even_both IN (?, 'both') AND 
 			                             start.city = ? AND end.city = ? AND
