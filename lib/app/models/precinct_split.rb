@@ -18,5 +18,9 @@ class PrecinctSplit < ActiveRecord::Base
 		all_tabs = [tabulation_areas.collect{|t| t.parents} + tabulation_areas].flatten
 		[all_tabs.collect{|t| t.contests} + precinct.contests].flatten.uniq
 	end
+
+	def ballot_drop_locations
+		self.precinct.ballot_drop_locations
+	end
 end
 
