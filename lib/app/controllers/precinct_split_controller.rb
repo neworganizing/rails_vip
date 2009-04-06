@@ -1,4 +1,4 @@
-class PrecinctSplitsController < ApplicationController
+class PrecinctSplitController < ApplicationController
 
   def index
     @precinct_splits = PrecinctSplit.find(:all)
