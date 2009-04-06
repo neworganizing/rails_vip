@@ -9,18 +9,23 @@ class PollingLocationController < ApplicationController
 
 		address_versions = []
 		address_versions.push @polling_location.address
-		if @polling_location.precincts.first.street_segments.size > 0
+
+		sample_location = @polling_location.precincts.first
+		sample_location = @polling_location.precinct_splits.first if sample_location.nil?
+		if sample_location and sample_location.street_segments.size > 0
 			address_versions.push @polling_location.name    + ', ' + \
 			                      @polling_location.address + ', ' + \
-			                      @polling_location.precincts.first.street_segments.first.start_street_address.city + ', ' + \
-			                      @polling_location.precincts.first.locality.state.name 
+			                      sample_location.street_segments.first.start_street_address.city + ', ' + \
+			                      sample_location.locality.state.name 
+
 			address_versions.push @polling_location.name    + ', ' + \
 			                      @polling_location.address + ', ' + \
-			                      @polling_location.precincts.first.street_segments.first.start_street_address.city + ', ' +
-			                      @polling_location.precincts.first.locality.state.name
+			                      sample_location.street_segments.first.start_street_address.city + ', ' + \
+			                      sample_location.locality.state.name 
+
 			address_versions.push @polling_location.address + ', ' + \
-			                      @polling_location.precincts.first.street_segments.first.start_street_address.city + ', ' +
-			                      @polling_location.precincts.first.locality.state.name 
+			                      sample_location.street_segments.first.start_street_address.city + ', ' + \
+			                      sample_location.locality.state.name 
 		end	
 		@polling_loc_std = nil
 

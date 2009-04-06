@@ -6,6 +6,7 @@ class PrecinctSplit < ActiveRecord::Base
 	has_and_belongs_to_many :tabulation_areas
 
 	has_many :custom_notes, :as => :object
+	has_many :street_segments
 
 	# Uses StreetSegment.find_by_address to find a precinct split based on an address
 	def find_by_address(address)
@@ -21,6 +22,10 @@ class PrecinctSplit < ActiveRecord::Base
 
 	def ballot_drop_locations
 		self.precinct.ballot_drop_locations
+	end
+
+	def locality
+		self.precinct.locality
 	end
 end
 
