@@ -65,7 +65,9 @@ class StreetSegment < ActiveRecord::Base
 		                                     #{active_conditions} AND
 		                                     street_segments.start_street_address_id=start.id AND
 		                                     street_segments.end_street_address_id  =end.id AND
-					             start.state_id=s.id",
+					             start.state_id=s.id AND
+		                                     start.source_id=street_segments.source_id AND
+		                                     end.source_id=street_segments.source_id",
 			                             street_name, street_name, 
 			                             street_dir, street_dir, 
 			                             street_suffix, street_suffix, 
