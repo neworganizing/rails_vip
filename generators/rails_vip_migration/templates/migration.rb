@@ -354,7 +354,7 @@ class <%= migration_name %> < ActiveRecord::Migration
   end
 
   add_index "street_addresses", ["source_id", "file_internal_id"], :name => "index_street_addresses_on_source_id_and_file_internal_id"
-  add_index "street_addresses", ["street_name", "city", "house_number", "id"], :name => "idx_street_addresses_street_city_num_id"
+  add_index "street_addresses", ["source_id", "city", "std_street_name", "std_house_number", "id"], :name => "idx_street_addresses_source_id_city_std_street_name_num"
 
   create_table "street_segments", :force => true do |t|
     t.integer "source_id",                                               :null => false
